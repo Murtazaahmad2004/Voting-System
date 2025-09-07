@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='script/main.js') }}"></script>
+    <title>Voting Page</title>
+</head>
+<body>
+    <div class="voting_page">
+        <marquee>
+            <h1>Please Select Your Candidate & Vote</h1>
+        </marquee>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer-box">
+        Time Remaining: <span id="voting_timer_display">05:00</span>
+    </div>
+
+    <form method="POST" action="/voting_page">
+        <table class="table table-bordered">
+            <button type="submit" class="btn btn-success save-btn">Save</button>
+            <caption>Eligible Candidates</caption>
+            <thead>
+                <tr>
+                    <th>SR. No</th>
+                    <th>Party Name</th>
+                    <th>Candidate Name</th>
+                    <th>Picture</th>
+                    <th>Party Symbol</th>
+                    <th>Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in candidates %}
+                <tr>
+                    <td>{{ c.id }}</td>
+                    <td>{{ c.party }}</td>
+                    <td>{{ c.candidate }}</td>
+                    <td><img src="{{ url_for('static', filename='images/' + c.picture) }}" class="profile-pic"></td>
+                    <td><img src="{{ url_for('static', filename='images/' + c.symbol) }}" class="profile-pic"></td>
+                    <td><input type="radio" name="selected_candidate" value="{{ c.id }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>

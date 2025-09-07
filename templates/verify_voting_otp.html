@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Voting OTP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="verify-container">
+        <h2>Enter OTP for Voting Registration</h2>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div>
+              {% for message in messages %}
+                <p>{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- OTP Form -->
+        <form method="POST" action="/verify_voting_otp">
+            <div class="form-group">
+                <label for="otp">OTP:</label>
+                <input type="text" name="otp" class="form-control" placeholder="Enter OTP" required>
+            </div>
+
+            <button type="submit" class="btn btn-success">Verify</button>
+        </form>
+    </div>
+</body>
+</html>

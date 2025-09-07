@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    {% include 'sidebar.html' %}
+    <div class="navbar">
+        <h1>Voter Registration Page</h1>
+    </div>
+    <div class="voting-registration-container">
+        <h2>Voting Registration</h2>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div>
+              {% for message in messages %}
+                <p>{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Registration Form -->
+        <form method="POST" action="/voteing_registration">
+            <div class="form-group">
+                <label for="idcard">CNIC:</label>
+                <input type="text" name="idcard" class="form-control" placeholder="Enter ID Card" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" name="email" class="form-control" placeholder="Enter Email" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+    <div class="footer">
+        <p>&copy; 2023 Voting System. All rights reserved.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='script/main.js') }}"></script>
+  <title>Sidebar</title>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="/voter_home_page">Home Page</a>
+    <a href="/voteing_registration">Voting Registration</a>
+    <a href="/voting_page">Voting Page</a>
+    <a href="/see_results">Results</a>
+    <a href="#">Polling Stations Locations</a>
+    <a href="/login">Logout</a>
+  </div>
+
+  <!-- Toggle Button -->
+  <div class="toggle-btn" onclick="toggleSidebar()">☰</div>
+</body>
+</html>
