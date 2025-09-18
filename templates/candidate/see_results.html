@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Voting Results(Candidate)</title>
+</head>
+<body>
+
+    {% include '/candidate/candidate_sidebar.html' %}
+
+    <div class="navbar">
+        <h1>Result Page</h1>
+    </div>
+
+    <div class="container">
+        <h2 class="text-center">Voting Results</h2>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Party Name</th>
+                    <th>Candidate Name</th>
+                    <th>Total Votes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ row.party_name }}</td>
+                    <td>{{ row.candidate_name }}</td>
+                    <td>{{ row.total_votes }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="footer">
+        <p>&copy; 2023 Voting System. All rights reserved.</p>
+  </div>
+</body>
+</html>

@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voting Registration</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Voting Registration(Voter)</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='script/main.js') }}"></script>
 </head>
 <body>
-    {% include 'sidebar.html' %}
-    <div class="navbar">
+    {% include '/voter/voter_sidebar.html' %}
+      <div class="navbar">
         <h1>Voter Registration Page</h1>
-    </div>
+      </div>
     <div class="voting-registration-container">
         <h2>Voting Registration</h2>
 
@@ -27,7 +28,7 @@
         {% endwith %}
 
         <!-- Registration Form -->
-        <form method="POST" action="/voteing_registration">
+        <form method="POST" action="/voter/voteing_registration">
             <div class="form-group">
                 <label for="idcard">CNIC:</label>
                 <input type="text" name="idcard" class="form-control" placeholder="Enter ID Card" required>
@@ -41,6 +42,7 @@
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
     </div>
+
     <div class="footer">
         <p>&copy; 2023 Voting System. All rights reserved.</p>
     </div>

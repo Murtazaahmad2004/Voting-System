@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='script/main.js') }}"></script>
+    <title>Voting Page(Voter)</title>
+</head>
+<body>
+    {% include '/voter/voter_sidebar.html' %}
+     <div class="navbar">
+        <h1>Voter Registration Page</h1>
+      </div>
+    <div class="voting_page">
+        <marquee>
+            <h1>Please Select Your Candidate & Vote</h1>
+        </marquee>
+    </div>
+
+    <form method="POST" action="/voter/voting_page">
+        <table id="voterTable" class="table table-bordered table-hover">
+            <button type="submit" class="btn btn-success save-btn">Save</button>
+            <caption>Eligible Candidates</caption>
+            <thead>
+                <tr>
+                    <th>SR. No</th>
+                    <th>Candidate Name</th>
+                    <th>gender</th>
+                    <th>id_card</th>
+                    <th>email</th>
+                    <th>party_name</th>
+                    <th>party_logo</th>
+                    <th>profile_pic</th>
+                    <th>Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for candidate in candidates %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ candidate['candidate_name'] }}</td>
+                    <td>{{ candidate['gender'] }}</td>
+                    <td>{{ candidate['id_card'] }}</td>
+                    <td>{{ candidate['email'] }}</td>
+                    <td>{{ candidate['party_name'] }}</td>
+                    <td>
+                        <img src="{{ url_for('static', filename='images/' ~ candidate['party_logo']) }}" class="party-logo">
+                    </td>
+                    <td>
+                        <img src="{{ url_for('static', filename='images/' ~ candidate['profile_pic']) }}" class="profile-pic">
+                    </td>
+                    <td>
+                        <input type="radio" name="selected_candidate" value="{{ candidate['id_card'] }}" required>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+    <div class="footer">
+        <p>&copy; 2023 Voting System. All rights reserved.</p>
+    </div>
+</body>
+</html>

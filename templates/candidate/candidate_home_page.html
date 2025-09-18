@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Candidate Home Page(Candidate)</title>
+</head>
+<body>
+    {% include '/candidate/candidate_sidebar.html' %}
+
+    <div class="navbar">
+        <h1>Candidate Home Page</h1>
+    </div>
+
+  <div class="voter-container">
+    <marquee>
+      <h1>Welcome To Candidate Page.</h1>
+    </marquee>
+  </div>
+  <div class="footer">
+    <p>&copy; 2023 Voting System. All rights reserved.</p>
+  </div>
+</body>
+</html>

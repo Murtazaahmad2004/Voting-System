@@ -74,6 +74,7 @@ a:hover {
 .navbar {
     background-color: #283fa7;
     padding: 10px;
+    height: 10px;
     text-align: right;
 }
 
@@ -273,22 +274,60 @@ a:hover {
 }
 
 /* ======================
+   Party Logo Styling (shared)
+   ====================== */
+img.party-logo {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    padding: 4px;
+    background: #f8f9fa;
+    transition: transform 0.2s ease;
+}
+
+img.party-logo:hover {
+    transform: scale(1.1);
+}
+
+/* ======================
+   Profile Picture Styling (shared)
+   ====================== */
+img.profile-pic {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    padding: 4px;
+    background: #f8f9fa;
+    transition: transform 0.2s ease;
+}
+
+img.profile-pic:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ======================
    voting-registration-container
    ====================== */
 .voting-registration-container {
     width: 380px;
     margin: 120px auto;
+    text-align: left;
     padding: 30px 25px;
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.15);
     animation: fadeIn 0.5s ease-in-out;
 }
+
 /* ======================
-   Improved Login/Signup Styles
+   Login Styles
    ====================== */
-.login-container,
-.signup-container {
+.login-container {
     width: 380px;
     margin: 120px auto;
     padding: 30px 25px;
@@ -298,8 +337,7 @@ a:hover {
     animation: fadeIn 0.5s ease-in-out;
 }
 
-.login-container h1,
-.signup-container h1 {
+.login-container h1 {
     text-align: center;
     margin-bottom: 20px;
     font-size: 26px;
@@ -307,8 +345,7 @@ a:hover {
     font-weight: bold;
 }
 
-.login-container label,
-.signup-container label {
+.login-container label {
     font-size: 14px;
     font-weight: bold;
     color: #333;
@@ -318,7 +355,79 @@ a:hover {
 
 .login-container input[type="text"],
 .login-container input[type="email"],
-.login-container input[type="password"],
+.login-container input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.login-container input:focus {
+    border-color: #283fa7;
+    outline: none;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #283fa7, #1d2d78);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.login-container button:hover {
+    background: linear-gradient(135deg, #1d2d78, #283fa7);
+}
+
+.login-container p {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.login-container p a {
+    color: #283fa7;
+    font-weight: bold;
+}
+
+/* ======================
+   Signup Styles
+   ====================== */
+.signup-container {
+    width: 420px;
+    margin: 100px auto;
+    margin-top: 10px;
+    padding: 35px 30px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.signup-container h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 28px;
+    color: #283fa7;
+    font-weight: bold;
+}
+
+.signup-container label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 6px;
+    display: block;
+}
+
 .signup-container input[type="text"],
 .signup-container input[type="email"],
 .signup-container input[type="password"],
@@ -332,14 +441,12 @@ a:hover {
     transition: border-color 0.3s;
 }
 
-.login-container input:focus,
 .signup-container input:focus,
 .signup-container select:focus {
     border-color: #283fa7;
     outline: none;
 }
 
-.login-container button,
 .signup-container button {
     width: 100%;
     padding: 12px;
@@ -353,20 +460,89 @@ a:hover {
     transition: background 0.3s ease;
 }
 
-.login-container button:hover,
 .signup-container button:hover {
     background: linear-gradient(135deg, #1d2d78, #283fa7);
 }
 
-.login-container p,
 .signup-container p {
     text-align: center;
     margin-top: 15px;
     font-size: 14px;
 }
 
-.login-container p a,
 .signup-container p a {
+    color: #283fa7;
+    font-weight: bold;
+}
+
+/* ======================
+   candidate-container
+   ====================== */
+.candidate-container{
+    width: 380px;
+    margin: 120px auto;
+    padding: 30px 25px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.candidate-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 26px;
+    color: #283fa7;
+    font-weight: bold;
+}
+
+.candidate-container label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.candidate-container select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.candidate-container select:focus {
+    border-color: #283fa7;
+    outline: none;
+}
+
+.candidate-container button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #283fa7, #1d2d78);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.candidate-container button:hover {
+    background: linear-gradient(135deg, #1d2d78, #283fa7);
+}
+
+.candidate-container p {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.candidate-container p a {
     color: #283fa7;
     font-weight: bold;
 }
@@ -375,7 +551,7 @@ a:hover {
    table
    ====================== */
 .voting_table {
-    position: relative; /* Table ke andar button ko position karne ke liye */
+    position: relative;
 }
 
 .table-header {
@@ -421,6 +597,160 @@ caption {
   margin-bottom: 10px;
   font-size: 20px;
   font-weight: bold;
+}
+
+/* ======================
+   Signup Voters Data Page
+   ====================== */
+
+/* Page Heading */
+h2 {
+  text-align: center;
+  margin: 30px 0 20px 0;
+  font-size: 26px;
+  font-weight: bold;
+  color: #283fa7;
+}
+
+/* Flash messages */
+.alert {
+  width: 80%;
+  margin: 15px auto;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+.alert-success {
+  background: #d4edda;
+  color: #155724;
+  border-left: 5px solid #28a745;
+}
+
+.alert-error,
+.alert-danger {
+  background: #f8d7da;
+  color: #721c24;
+  border-left: 5px solid #dc3545;
+}
+
+.alert-warning {
+  background: #fff3cd;
+  color: #856404;
+  border-left: 5px solid #ffc107;
+}
+
+/* Table styling */
+#voterTable {
+  width: 70%;
+  margin: 25px auto 40px auto;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+#voterTable thead {
+  background: #283fa7;
+  color: #fff;
+}
+
+#voterTable th,
+#voterTable td {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+#voterTable tr:hover {
+  background: #f9f9f9;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.icon-button i {
+  font-size: 18px;
+}
+
+.icon-button.edit i {
+  color: #007bff;
+}
+
+.icon-button.delete i {
+  color: #dc3545;
+}
+
+.icon-button.export-btn i {
+  color: #28a745;
+}
+
+.icon-button:hover {
+  transform: scale(1.2);
+  opacity: 0.85;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #voterTable {
+    width: 95%;
+    font-size: 13px;
+  }
+  .action-buttons {
+    gap: 8px;
+  }
+  .icon-button i {
+    font-size: 16px;
+  }
+}
+
+/* ======================
+   id_card
+   ====================== */
+.id_card {
+  max-width: 500px;
+  margin: 0 auto 20px auto;
+  padding: 15px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.08);
+  text-align: left;
+}
+
+.id_card label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+  color: #2c3e50;
+}
+
+.id_card select {
+  margin-bottom: 12px;
+  height: 40px;
+  border-radius: 6px;
+}
+
+.id_card button {
+  width: 100%;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 8px 16px;
 }
 
 /* ======================

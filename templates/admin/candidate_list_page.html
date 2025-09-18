@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='script/main.js') }}" defer></script>
+  <title>Candidates Data(Admin)</title>
+</head>
+<body>
+    {% include '/admin/admin_sidebar.html' %}
+
+    <div class="navbar">
+        <h1>List Page</h1>
+    </div>
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <h2>Candidates Records</h2>
+
+  <!-- Filter Form -->
+<div class="id_card">
+  <form method="GET" action="/voter_list_page">
+    <label for="id_card">Filter by CNIC:</label>
+    <input type="text" id="id_card" name="id_card" class="form-control" placeholder="Enter CNIC" required>
+    <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
+  </form>
+</div>
+  <!-- Records Table -->
+  <table id="voterTable" class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>S. #</th>
+        <th>Candidate Name</th>
+        <th>Gender</th>
+        <th>ID Card Number</th>
+        <th>Email</th>
+        <th>party_name</th>
+        <th>party_logo</th>
+        <th>profile_pic</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for record in records %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ record['candidate_name'] }}</td>
+        <td>{{ record['gender'] }}</td>
+        <td>{{ record['id_card'] }}</td>
+        <td>{{ record['email'] }}</td>
+        <td>{{ record['party_name'] }}</td>
+        <td>
+            <img src="{{ url_for('static', filename='images/' ~ record['party_logo']) }}" class="party-logo">
+        </td>
+        <td>
+            <img src="{{ url_for('static', filename='images/' ~ record['profile_pic']) }}" class="profile-pic">
+        </td>
+        <td>
+          <div class="action-buttons">
+            <a href="//{{ record['id'] }}" class="icon-button edit" title="Edit">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a href="/delete/{{ record['id_card'] }}" class="icon-button delete" title="Edit" onsubmit="return confirmDelete();">
+              <i class="fas fa-trash-alt"></i>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="9">No records found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+    <div class="text-center">
+        <a href="/export_candidate_csv" 
+        class="btn btn-success export-btn">
+        <i class="fas fa-file-csv"></i> Export to CSV
+        </a>
+    </div>
+
+   <div class="footer">
+    <p>&copy; 2023 Voting System. All rights reserved.</p>
+  </div>
+</body>
+</html>

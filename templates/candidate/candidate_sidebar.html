@@ -6,16 +6,15 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="{{ url_for('static', filename='script/main.js') }}"></script>
-  <title>Sidebar</title>
+  <title>Candidate Sidebar</title>
 </head>
 <body>
   <!-- Sidebar -->
   <div class="sidebar">
-    <a href="/voter_home_page">Home Page</a>
-    <a href="/voteing_registration">Voting Registration</a>
-    <a href="/voting_page">Voting Page</a>
-    <a href="/see_results">Results</a>
-    <a href="#">Polling Stations Locations</a>
+    <a href="/candidate/candidate_home_page">Home Page</a>
+    <a href="/candidate/candidate_page">New Candidate</a>
+    <a href="/candidate/candidate_list">Candidate Management</a>
+    <a href="/candidate/see_results">Voting Results</a>
     <a href="/login">Logout</a>
   </div>
 

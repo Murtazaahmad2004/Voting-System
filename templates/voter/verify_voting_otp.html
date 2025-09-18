@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Voting OTP</title>
+    <title>Verify Voting OTP(Voter)</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
@@ -23,7 +23,7 @@
         {% endwith %}
 
         <!-- OTP Form -->
-        <form method="POST" action="/verify_voting_otp">
+        <form method="POST" action="/voter/verify_voting_otp">
             <div class="form-group">
                 <label for="otp">OTP:</label>
                 <input type="text" name="otp" class="form-control" placeholder="Enter OTP" required>

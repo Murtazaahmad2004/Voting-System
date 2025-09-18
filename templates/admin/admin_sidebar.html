@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='script/main.js') }}"></script>
+  <title>Admin Sidebar</title>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="/admin/admin_page">Home Page</a>
+    <a href="#">DashBoard</a>
+    <a href="/admin/voter_list_page">Role Management</a>
+    <a href="/admin/candidate_page">New Candidate</a>
+    <a href="/admin/candidate_list_page">Candidate/Party Management</a>
+    <a href="/admin/see_results">Voting Results</a>
+    <a href="#">Election Management</a>
+    <a href="#">Live Results Tracking</a>
+    <a href="#">Reports Generation</a>
+    <a href="#">Notifications & Alerts</a>
+    <a href="/login">Logout</a>
+  </div>
+  <!-- Toggle Button -->
+  <div class="toggle-btn" onclick="toggleSidebar()">☰</div>
+</body>
+</html>
