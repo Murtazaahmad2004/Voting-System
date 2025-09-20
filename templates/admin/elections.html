@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Elections</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    {% include '/admin/admin_sidebar.html' %}
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+            {{ message }}
+            </div>
+        {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="container">
+        <h2 class="text-center">🗳️ Elections Management</h2>
+        <a href="{{ url_for('create_election') }}" class="btn btn-primary">➕ Create New Election</a>
+        <br><br>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Status</th>
+                    <th>Manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for election in elections %}
+                <tr>
+                    <td>{{ election.id }}</td>
+                    <td>{{ election.title }}</td>
+                    <td>{{ election.start_date }}</td>
+                    <td>{{ election.end_date }}</td>
+                    <td>
+                        {% if election.is_active %}
+                            <span class="label label-success">Active</span>
+                        {% else %}
+                            <span class="label label-danger">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('toggle_election', election_id=election.id) }}" class="btn btn-warning btn-sm">
+                            {% if election.is_active %}Deactivate{% else %}Activate{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="footer">
+        <p>&copy; 2023 Voting System. All rights reserved.</p>
+    </div>
+</body>
+</html>

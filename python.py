@@ -459,6 +459,69 @@ def admin_see_result():
     conn.close()
 
     return render_template('/admin/see_results.html', results=results)
+
+# Create new election
+@app.route('/admin/create_election', methods=['GET', 'POST'])
+def create_election():
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+        start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        rules = request.form['rules']
+
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO elections (title, description, start_date, end_date, rules, is_active)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (title, description, start_date, end_date, rules, False))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            flash("✅ Election created successfully!", "success")
+        except Exception as e:
+            flash(f"❌ Error creating election: {e}", "danger")
+
+        return redirect(url_for('list_elections'))
+
+    return render_template('/admin/create_election.html')
+
+# List elections (with activate/deactivate)
+@app.route('/admin/elections')
+def list_elections():
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM elections ORDER BY id DESC")
+        elections = cursor.fetchall()
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        elections = []
+        flash(f"❌ Database error: {e}", "danger")
+
+    return render_template('/admin/elections.html', elections=elections)
+
+# Activate/Deactivate election
+@app.route('/admin/toggle_election/<int:election_id>')
+def toggle_election(election_id):
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT is_active FROM elections WHERE id = %s", (election_id,))
+        election = cursor.fetchone()
+        new_status = not election['is_active']
+        cursor.execute("UPDATE elections SET is_active = %s WHERE id = %s", (new_status, election_id))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        flash("✅ Election status updated!", "success")
+    except Exception as e:
+        flash(f"❌ Error updating status: {e}", "danger")
+
+    return redirect(url_for('list_elections'))
 # End Admin DashBoard
 
 # Start Candidate DashBoard
@@ -620,36 +683,76 @@ def candidate_see_result():
 # VOTING REGISTRATION 
 @app.route('/voter/voteing_registration', methods=['GET', 'POST'])
 def voter_voteing_registration():
-    if request.method == 'POST':
-        idcard = request.form['idcard']
-        email = request.form['email']
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
 
-        # generate OTP
-        otp = str(random.randint(100000, 999999))
-        session['otp'] = otp
-        session['user_data'] = {
-            'idcard': idcard,
-            'email': email
-        }
+        # 👉 Active election fetch
+        cursor.execute("""
+            SELECT * FROM elections 
+            WHERE is_active = TRUE 
+            ORDER BY start_date DESC 
+            LIMIT 1
+        """)
+        election = cursor.fetchone()
 
-        try:
-            msg = EmailMessage()
-            msg['Subject'] = 'Voting OTP Verification'
-            msg['From'] = "shmurtazaahmad334@gmail.com"
-            msg['To'] = email
-            msg.set_content(f"Your voting OTP is: {otp}")
+        election_active = False
+        election_start = None
+        election_end = None
 
-            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login("shmurtazaahmad334@gmail.com", "lhmv zrnz ecqk ajke")
-                smtp.send_message(msg)
+        if election:
+            election_start = election['start_date']
+            election_end = election['end_date']
 
-            flash("📧 OTP sent to your email. Please verify.", "info")
-            return redirect(url_for('voting_verify_voting_otp'))
-        except Exception as e:
-            flash(f"❌ Error sending OTP: {e}", "error")
+            now = datetime.now()
+            if election_start <= now <= election_end:
+                election_active = True
 
-    # 🟢 deadline inject kar do frontend me
-    return render_template('/voter/voteing_registration.html')
+        if request.method == 'POST':
+            if not election_active:
+                flash("❌ Registration is closed because election is not active.", "danger")
+                return redirect(url_for('voter_voteing_registration'))
+
+            idcard = request.form['idcard']
+            email = request.form['email']
+
+            # generate OTP
+            otp = str(random.randint(100000, 999999))
+            session['otp'] = otp
+            session['user_data'] = {
+                'idcard': idcard,
+                'email': email
+            }
+
+            try:
+                msg = EmailMessage()
+                msg['Subject'] = 'Voting OTP Verification'
+                msg['From'] = "shmurtazaahmad334@gmail.com"
+                msg['To'] = email
+                msg.set_content(f"Your voting OTP is: {otp}")
+
+                with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                    smtp.login("shmurtazaahmad334@gmail.com", "lhmv zrnz ecqk ajke")
+                    smtp.send_message(msg)
+
+                flash("📧 OTP sent to your email. Please verify.", "info")
+                return redirect(url_for('voting_verify_voting_otp'))
+            except Exception as e:
+                flash(f"❌ Error sending OTP: {e}", "danger")
+
+        cursor.close()
+        conn.close()
+
+    except Exception as e:
+        flash(f"❌ Database error: {e}", "danger")
+
+    # 🟢 election info frontend me pass karenge
+    return render_template(
+        '/voter/voteing_registration.html',
+        election_active=election_active,
+        election_start=election_start,
+        election_end=election_end
+    )
 
 # verify otp voting registration
 @app.route('/voter/verify_voting_otp', methods=['GET', 'POST'])
@@ -687,27 +790,52 @@ def voter_voting_page():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
 
-        # Candidate data fetch
+        # 👉 Fetch the latest active election
+        cursor.execute("""
+            SELECT * FROM elections 
+            WHERE is_active = TRUE 
+            ORDER BY start_date DESC 
+            LIMIT 1
+        """)
+        election = cursor.fetchone()
+
+        election_active = False
+        election_start = None
+        election_end = None
+
+        if election:
+            election_start = election['start_date']
+            election_end = election['end_date']
+
+            # check if current time is between start & end
+            now = datetime.now()
+            if election_start <= now <= election_end:
+                election_active = True
+
+        # 👉 Fetch candidates
         cursor.execute("""
             SELECT candidate_name, gender, id_card, email, party_name, party_logo, profile_pic 
             FROM candidate
         """)
         candidates = cursor.fetchall()
 
+        # 👉 Handle vote submission
         if request.method == 'POST':
+            if not election_active:
+                flash("❌ Voting is closed!", "danger")
+                return redirect(url_for('voter_voting_page'))
+
             selected_id = request.form.get('selected_candidate')
             if not selected_id:
-                flash("❌ Please select a candidate!")
+                flash("❌ Please select a candidate!", "danger")
                 return redirect(url_for('voter_voting_page'))
 
-            # Candidate find by id_card
             selected = next((c for c in candidates if c['id_card'] == selected_id), None)
-
             if not selected:
-                flash("❌ Invalid candidate selected!")
+                flash("❌ Invalid candidate selected!", "danger")
                 return redirect(url_for('voter_voting_page'))
 
-            # ✅ Correct insert (5 columns → 5 values)
+            # ✅ Insert vote
             cursor2 = conn.cursor()
             cursor2.execute("""
                 INSERT INTO votes_full 
@@ -725,17 +853,23 @@ def voter_voting_page():
             conn.commit()
             cursor2.close()
 
-            flash("✅ Your vote has been recorded successfully!")
+            flash("✅ Your vote has been recorded successfully!", "success")
             return redirect(url_for('voter_voting_page'))
 
         cursor.close()
         conn.close()
 
     except Exception as e:
-        flash(f"❌ Database error: {e}")
+        flash(f"❌ Database error: {e}", "danger")
         return redirect(url_for('voter_voting_page'))
 
-    return render_template('/voter/voting_page.html', candidates=candidates)
+    return render_template(
+        '/voter/voting_page.html',
+        candidates=candidates,
+        election_active=election_active,
+        election_start=election_start,
+        election_end=election_end
+    )
 
 # Result screen
 @app.route('/voter/see_results')
@@ -773,6 +907,11 @@ def candidate_candidate_home_page():
 @app.route('/voter/voter_home_page')
 def voter_voter_home_page():
     return render_template('/voter/voter_home_page.html')
+
+# Voter home page
+@app.route('/voter/polling_station_location')
+def voter_polling_station_location():
+    return render_template('/voter/polling_station_location.html')
 
 # Flask App Run
 if __name__ == '__main__':

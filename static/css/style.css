@@ -13,6 +13,13 @@ body.signup-page {
   height: 100vh;
 }
 
+/* ======================
+   Text Area
+   ====================== */
+.form-group{
+  overflow: hidden;
+}
+
 h1, h2 {
     text-align: center;
 }
@@ -476,6 +483,32 @@ img.profile-pic:hover {
 }
 
 /* ======================
+   create-election-container
+   ====================== */
+.create-election-container {
+    width: 380px;
+    margin: 120px auto;
+    padding: 30px 25px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.create-election-container button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+/* ======================
    candidate-container
    ====================== */
 .candidate-container{
@@ -640,6 +673,37 @@ h2 {
   background: #fff3cd;
   color: #856404;
   border-left: 5px solid #ffc107;
+}
+
+/* Polling Table styling */
+#pollingTable {
+  width: 70%;
+  margin: 25px auto 40px auto;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+#pollingTable thead {
+  background: #283fa7;
+  color: #fff;
+}
+
+#pollingTable th,
+#pollingTable td {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 1px solid #eaeaea;
+}
+
+#pollingTable tr:hover {
+  font-size: 16px;
+  font-weight: bold;
+  background: #f9f9f9;
 }
 
 /* Table styling */

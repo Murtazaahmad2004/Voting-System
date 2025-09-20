@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Polling Stations Locations(Voter)</title>
+</head>
+<body>
+     {% include '/voter/voter_sidebar.html' %}
+     <div class="navbar">
+        <h1>Polling Stations Locations Page</h1>
+      </div>
+    <div class="voting_page">
+        <marquee>
+            <h1>Polling Stations Locations</h1>
+        </marquee>
+    </div>
+    <div class="polling-stations-container">
+        <table id="pollingTable" class="table table-bordered table-hover">
+            <caption>Polling Stations Locations</caption>
+            <thead>
+                <tr>
+                    <th>SR. No</th>
+                    <th>Country Name</th>
+                    <th>City Name</th>
+                    <th>Polling Station Name</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>1</td>
+                <td>Pakistan</td>
+                <td>Karachi</td>
+                <td>Government College</td>
+                <td>Shahrah-e-Faisal, Karachi</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Pakistan</td>
+                <td>Karachi</td>
+                <td>City School Campus</td>
+                <td>Gulshan-e-Iqbal Block 7, Karachi</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Pakistan</td>
+                <td>Lahore</td>
+                <td>Government College University</td>
+                <td>Lower Mall Road, Lahore</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Pakistan</td>
+                <td>Lahore</td>
+                <td>Divisional Public School</td>
+                <td>Model Town, Lahore</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Pakistan</td>
+                <td>Islamabad</td>
+                <td>Islamabad Model College for Boys</td>
+                <td>G-10/4, Islamabad</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Pakistan</td>
+                <td>Islamabad</td>
+                <td>Islamabad Model School</td>
+                <td>F-8/3, Islamabad</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Pakistan</td>
+                <td>Rawalpindi</td>
+                <td>Government Girls College</td>
+                <td>Satellite Town, Rawalpindi</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>Pakistan</td>
+                <td>Rawalpindi</td>
+                <td>Sir Syed School</td>
+                <td>Murree Road, Rawalpindi</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>Pakistan</td>
+                <td>Faisalabad</td>
+                <td>Government College Faisalabad</td>
+                <td>Jail Road, Faisalabad</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>Pakistan</td>
+                <td>Faisalabad</td>
+                <td>Chenab College</td>
+                <td>Jaranwala Road, Faisalabad</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>Pakistan</td>
+                <td>Multan</td>
+                <td>Government Emerson College</td>
+                <td>Near Ghanta Ghar, Multan</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td>Pakistan</td>
+                <td>Multan</td>
+                <td>Central School Multan</td>
+                <td>Cantt Area, Multan</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td>Pakistan</td>
+                <td>Quetta</td>
+                <td>Government Science College</td>
+                <td>Jinnah Road, Quetta</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td>Pakistan</td>
+                <td>Quetta</td>
+                <td>Model School Quetta</td>
+                <td>Saryab Road, Quetta</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td>Pakistan</td>
+                <td>Peshawar</td>
+                <td>Edwardes College</td>
+                <td>Cantonment, Peshawar</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td>Pakistan</td>
+                <td>Peshawar</td>
+                <td>Islamia Collegiate School</td>
+                <td>University Road, Peshawar</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td>Pakistan</td>
+                <td>Sialkot</td>
+                <td>Govt Murray College</td>
+                <td>Paris Road, Sialkot</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td>Pakistan</td>
+                <td>Sialkot</td>
+                <td>Divisional School</td>
+                <td>Daska Road, Sialkot</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td>Pakistan</td>
+                <td>Gujranwala</td>
+                <td>Govt Degree College</td>
+                <td>Cantt Area, Gujranwala</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td>Pakistan</td>
+                <td>Gujranwala</td>
+                <td>City Model School</td>
+                <td>G.T Road, Gujranwala</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td>Pakistan</td>
+                <td>Hyderabad</td>
+                <td>Govt Boys High School</td>
+                <td>Latifabad No. 5, Hyderabad</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td>Pakistan</td>
+                <td>Hyderabad</td>
+                <td>Public School Hyderabad</td>
+                <td>Airport Road, Hyderabad</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td>Pakistan</td>
+                <td>Sukkur</td>
+                <td>Govt Girls College Sukkur</td>
+                <td>Military Road, Sukkur</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td>Pakistan</td>
+                <td>Sukkur</td>
+                <td>Model School Sukkur</td>
+                <td>Barrage Colony, Sukkur</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td>Pakistan</td>
+                <td>Bahawalpur</td>
+                <td>Sadiq Public School</td>
+                <td>Bahawalpur Cantt, Bahawalpur</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td>Pakistan</td>
+                <td>Bahawalpur</td>
+                <td>Govt Girls School</td>
+                <td>Satellite Town, Bahawalpur</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td>Pakistan</td>
+                <td>Mardan</td>
+                <td>Govt College Mardan</td>
+                <td>Cantt Area, Mardan</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td>Pakistan</td>
+                <td>Mardan</td>
+                <td>Govt High School</td>
+                <td>Baghdada, Mardan</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td>Pakistan</td>
+                <td>Abbottabad</td>
+                <td>Army Burn Hall College</td>
+                <td>Cantt Area, Abbottabad</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td>Pakistan</td>
+                <td>Abbottabad</td>
+                <td>Govt Girls College</td>
+                <td>Mansehra Road, Abbottabad</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td>Pakistan</td>
+                <td>Mirpur (AJK)</td>
+                <td>Govt Degree College</td>
+                <td>New City, Mirpur</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td>Pakistan</td>
+                <td>Mirpur (AJK)</td>
+                <td>Govt Girls School</td>
+                <td>Sector F-1, Mirpur</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td>Pakistan</td>
+                <td>Gilgit</td>
+                <td>Govt Degree College Gilgit</td>
+                <td>Jutial, Gilgit</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td>Pakistan</td>
+                <td>Gilgit</td>
+                <td>Public School Gilgit</td>
+                <td>Konodas, Gilgit</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td>Pakistan</td>
+                <td>Skardu</td>
+                <td>Govt High School Skardu</td>
+                <td>Hussainabad, Skardu</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td>Pakistan</td>
+                <td>Skardu</td>
+                <td>Boys Degree College</td>
+                <td>Satpara Road, Skardu</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td>Pakistan</td>
+                <td>Kohat</td>
+                <td>Govt Degree College Kohat</td>
+                <td>KDA Township, Kohat</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td>Pakistan</td>
+                <td>Kohat</td>
+                <td>Govt Girls School</td>
+                <td>Railway Road, Kohat</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td>Pakistan</td>
+                <td>Sahiwal</td>
+                <td>Divisional Public School</td>
+                <td>Farid Town, Sahiwal</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td>Pakistan</td>
+                <td>Sahiwal</td>
+                <td>Govt Girls High School</td><td>Multan Road, Sahiwal</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="footer">
+        <p>&copy; 2023 Voting System. All rights reserved.</p>
+    </div>
+</body>
+</html>

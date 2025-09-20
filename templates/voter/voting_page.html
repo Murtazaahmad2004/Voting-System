@@ -6,59 +6,89 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='script/main.js') }}"></script>
-    <title>Voting Page(Voter)</title>
+    <title>Voting Page (Voter)</title>
 </head>
 <body>
     {% include '/voter/voter_sidebar.html' %}
-     <div class="navbar">
-        <h1>Voter Registration Page</h1>
-      </div>
+
+    <div class="navbar">
+        <h1>Voter Voting Page</h1>
+    </div>
+
     <div class="voting_page">
         <marquee>
             <h1>Please Select Your Candidate & Vote</h1>
         </marquee>
     </div>
 
-    <form method="POST" action="/voter/voting_page">
-        <table id="voterTable" class="table table-bordered table-hover">
-            <button type="submit" class="btn btn-success save-btn">Save</button>
-            <caption>Eligible Candidates</caption>
-            <thead>
-                <tr>
-                    <th>SR. No</th>
-                    <th>Candidate Name</th>
-                    <th>gender</th>
-                    <th>id_card</th>
-                    <th>email</th>
-                    <th>party_name</th>
-                    <th>party_logo</th>
-                    <th>profile_pic</th>
-                    <th>Select</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for candidate in candidates %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ candidate['candidate_name'] }}</td>
-                    <td>{{ candidate['gender'] }}</td>
-                    <td>{{ candidate['id_card'] }}</td>
-                    <td>{{ candidate['email'] }}</td>
-                    <td>{{ candidate['party_name'] }}</td>
-                    <td>
-                        <img src="{{ url_for('static', filename='images/' ~ candidate['party_logo']) }}" class="party-logo">
-                    </td>
-                    <td>
-                        <img src="{{ url_for('static', filename='images/' ~ candidate['profile_pic']) }}" class="profile-pic">
-                    </td>
-                    <td>
-                        <input type="radio" name="selected_candidate" value="{{ candidate['id_card'] }}" required>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </form>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if election_active %}
+        <!-- ✅ Show voting form only if election is open -->
+        <form method="POST" action="/voter/voting_page">
+            <table id="voterTable" class="table table-bordered table-hover">
+                <caption>Eligible Candidates</caption>
+                <thead>
+                    <tr>
+                        <th>SR. No</th>
+                        <th>Candidate Name</th>
+                        <th>Gender</th>
+                        <th>ID Card</th>
+                        <th>Email</th>
+                        <th>Party Name</th>
+                        <th>Party Logo</th>
+                        <th>Profile Pic</th>
+                        <th>Select</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in candidates %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ candidate['candidate_name'] }}</td>
+                        <td>{{ candidate['gender'] }}</td>
+                        <td>{{ candidate['id_card'] }}</td>
+                        <td>{{ candidate['email'] }}</td>
+                        <td>{{ candidate['party_name'] }}</td>
+                        <td>
+                            <img src="{{ url_for('static', filename='images/' ~ candidate['party_logo']) }}" class="party-logo">
+                        </td>
+                        <td>
+                            <img src="{{ url_for('static', filename='images/' ~ candidate['profile_pic']) }}" class="profile-pic">
+                        </td>
+                        <td>
+                            <input type="radio" name="selected_candidate" value="{{ candidate['id_card'] }}" required>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success save-btn">Submit Vote</button>
+            </div>
+        </form>
+    {% else %}
+        <!-- ❌ Election Closed Message -->
+        <div>
+            <h2>❌ Voting is currently closed!</h2>
+            {% if election_start and election_end %}
+                <p>Please come back between 
+                    <b>{{ election_start.strftime('%Y-%m-%d %H:%M') }}</b> 
+                    and 
+                    <b>{{ election_end.strftime('%Y-%m-%d %H:%M') }}</b>.
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
     <div class="footer">
         <p>&copy; 2023 Voting System. All rights reserved.</p>
     </div>
