@@ -33,7 +33,7 @@
 
   <!-- Filter Form -->
 <div class="id_card">
-  <form method="GET" action="/voter_list_page">
+  <form method="GET" action="/admin/voter_list_page">
     <label for="id_card">Filter by CNIC:</label>
     <input type="text" id="id_card" name="id_card" class="form-control" placeholder="Enter CNIC" required>
     <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
@@ -72,7 +72,8 @@
             <a href="//{{ record['id'] }}" class="icon-button edit" title="Edit">
               <i class="fas fa-edit"></i>
             </a>
-            <a href="/delete/{{ record['id_card'] }}" class="icon-button delete" title="Edit" onsubmit="return confirmDelete();">
+            <a href="{{ url_for('delete_voter_record', cnic=record['id_card']) }}" class="icon-button delete" title="Delete" 
+              onclick="return confirm('Are you sure you want to delete this record?');">
               <i class="fas fa-trash-alt"></i>
             </a>
           </div>
@@ -85,16 +86,8 @@
       {% endfor %}
     </tbody>
   </table>
-
-    <div class="text-center">
-        <a href="/export_voter_csv" 
-        class="btn btn-success export-btn">
-        <i class="fas fa-file-csv"></i> Export to CSV
-        </a>
+    <div class="footer">
+      <p>&copy; 2023 Voting System. All rights reserved.</p>
     </div>
-
-   <div class="footer">
-    <p>&copy; 2023 Voting System. All rights reserved.</p>
-  </div>
 </body>
 </html>

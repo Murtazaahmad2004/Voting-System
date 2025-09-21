@@ -667,12 +667,14 @@ h2 {
   background: #f8d7da;
   color: #721c24;
   border-left: 5px solid #dc3545;
+  width: 600px;
 }
 
 .alert-warning {
   background: #fff3cd;
   color: #856404;
   border-left: 5px solid #ffc107;
+  width: 600px;
 }
 
 /* Polling Table styling */

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Voting Results(Voter)</title>
+    <title>Voting Results (Voter)</title>
 </head>
 <body>
 
@@ -17,6 +17,9 @@
 
     <div class="container">
         <h2 class="text-center">Voting Results</h2>
+
+        {% if results and results|length > 0 %}
+        <!-- ✅ Show results table -->
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
                 <tr>
@@ -35,9 +38,23 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <!-- ❌ Election Closed Message -->
+        <div class="alert alert-danger">
+            <h2>❌ Result is currently closed!</h2>
+            {% if election_start and election_end %}
+                <p>Please come back between 
+                    <b>{{ election_start.strftime('%Y-%m-%d %H:%M') }}</b> 
+                    and 
+                    <b>{{ election_end.strftime('%Y-%m-%d %H:%M') }}</b>.
+                </p>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
+
     <div class="footer">
         <p>&copy; 2023 Voting System. All rights reserved.</p>
-  </div>
+    </div>
 </body>
 </html>

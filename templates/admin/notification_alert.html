@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Notifications</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  {% include 'admin/admin_sidebar.html' %}
+    <div class="navbar">
+        <h1>Notifications Page</h1>
+    </div>
+  <div class="container">
+    <h2>🔔 Notifications</h2>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Message</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for notif in notifications %}
+        <tr class="{{ 'success' if notif.is_read else 'warning' }}">
+          <td>{{ notif.id }}</td>
+          <td>{{ notif.message }}</td>
+          <td>{{ notif.created_at }}</td>
+          <td>{{ 'Read' if notif.is_read else 'Unread' }}</td>
+          <td>
+            {% if not notif.is_read %}
+              <a href="{{ url_for('mark_read', notif_id=notif.id) }}" class="btn btn-xs btn-primary">Mark as Read</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center">No notifications yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+    <div class="footer">
+        <p>&copy; 2023 Voting System. All rights reserved.</p>
+    </div>
+</body>
+</html>

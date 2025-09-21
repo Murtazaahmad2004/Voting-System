@@ -1,11 +1,10 @@
 import random
+import os
+from datetime import datetime
 from flask import Flask, Response, render_template, request, redirect, session, url_for, flash
 from flask_cors import CORS
 import mysql.connector
 import smtplib
-from email.message import EmailMessage
-from datetime import datetime, timedelta
-import os
 from email.message import EmailMessage
 from werkzeug.utils import secure_filename
 
@@ -21,12 +20,73 @@ db_config = {
     'database': 'voting_system'
 }
 
+# Upload config (single place)
+UPLOAD_FOLDER = 'static/images'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def send_email(to_email: str, subject: str, body: str):
+    """Simple helper to send an email using Gmail SMTP (App password required)."""
+    try:
+        msg = EmailMessage()
+        msg['Subject'] = subject
+        msg['From'] = "shmurtazaahmad334@gmail.com"
+        msg['To'] = to_email
+        msg.set_content(body)
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login("shmurtazaahmad334@gmail.com", "lhmv zrnz ecqk ajke")  # Gmail App Password
+            smtp.send_message(msg)
+        return True, None
+    except Exception as e:
+        return False, str(e)
+
+def save_uploaded_file(file_storage):
+    """Save uploaded file to configured upload folder and return filename or None."""
+    if file_storage and allowed_file(file_storage.filename):
+        filename = secure_filename(file_storage.filename)
+        dest = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file_storage.save(dest)
+        return filename
+    return None
+
+def insert_candidate_to_db(data):
+    """Insert candidate dict into candidate table. Expects keys:
+       username, gender, idcard, email, party_name, profile_pic, party_logo
+    """
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO candidate (candidate_name, gender, id_card, email, profile_pic, party_logo, party_name)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (
+            data['username'],
+            data['gender'],
+            data['idcard'],
+            data['email'],
+            data.get('profile_pic'),
+            data.get('party_logo'),
+            data.get('party_name')
+        ))
+        conn.commit()
+        return True, None
+    except Exception as e:
+        return False, str(e)
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
 # HOME 
 @app.route('/')
 def home():
     return render_template('login.html')
 
-# Start LOGIN 
+# LOGIN 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -39,7 +99,6 @@ def login():
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor(dictionary=True)
 
-            # ✅ Check user in database
             cursor.execute("""
                 SELECT * FROM signup 
                 WHERE id_card = %s AND password = %s
@@ -47,7 +106,6 @@ def login():
             user = cursor.fetchone()
 
             if user:
-                # ✅ Log successful login
                 cursor2 = conn.cursor()
                 cursor2.execute(
                     "INSERT INTO login (id_card, password) VALUES (%s, %s)",
@@ -56,16 +114,15 @@ def login():
                 conn.commit()
                 cursor2.close()
 
-                # ✅ Redirect based on role
-                if user.get("role") == "candidate":
+                role = user.get("role")
+                if role == "candidate":
                     return redirect(url_for('candidate_candidate_home_page'))
-                elif user.get("role") == "voter":
+                elif role == "voter":
                     return redirect(url_for('voter_voter_home_page'))
-                elif user.get("role") == "admin":
+                elif role == "admin":
                     return redirect(url_for('admin_page'))
                 else:
                     error = "❌ Unknown role for this user!"
-
             else:
                 error = "❌ Invalid idcard or password!"
 
@@ -76,9 +133,8 @@ def login():
             error = f"❌ Database error: {e}"
 
     return render_template('login.html', error=error)
-# End LOGIN
 
-# Start SIGNUP 
+# SIGNUP 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -94,11 +150,9 @@ def signup():
             flash("❌ Passwords do not match!", "error")
             return redirect(url_for('signup'))
 
-        # ✅ Role safety check (admin cannot be chosen by normal signup)
         if role not in ['voter', 'candidate']:
-            role = 'voter'  # fallback default role
+            role = 'voter'
 
-        # generate OTP
         otp = str(random.randint(100000, 999999))
         session['otp'] = otp
         session['user_data'] = {
@@ -111,39 +165,27 @@ def signup():
             'role': role
         }
 
-        # send OTP via email
-        try:
-            msg = EmailMessage()
-            msg['Subject'] = 'Your OTP Verification Code'
-            msg['From'] = "shmurtazaahmad334@gmail.com"
-            msg['To'] = email
-            msg.set_content(f"Your OTP code is: {otp}")
-
-            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login("shmurtazaahmad334@gmail.com", "lhmv zrnz ecqk ajke")  # apna Gmail App password
-                smtp.send_message(msg)
-
+        ok, err = send_email(email, 'Your OTP Verification Code', f"Your OTP code is: {otp}")
+        if ok:
             flash("📧 OTP sent to your email!", "info")
-        except Exception as e:
-            flash(f"❌ Error sending OTP: {e}", "error")
+        else:
+            flash(f"❌ Error sending OTP: {err}", "error")
 
         return redirect(url_for('verify_otp'))
 
     return render_template('signup.html')
 
-# verify otp signup
+# signup verify otp
 @app.route('/verify_otp', methods=['GET', 'POST'])
 def verify_otp():
     if request.method == 'POST':
         entered_otp = request.form['otp']
         if entered_otp == session.get('otp'):
             data = session.get('user_data')
-
             try:
                 conn = mysql.connector.connect(**db_config)
                 cursor = conn.cursor()
 
-                # ✅ Role again checked here for safety
                 safe_role = data['role'] if data['role'] in ['voter', 'candidate'] else 'voter'
 
                 cursor.execute("""
@@ -166,286 +208,87 @@ def verify_otp():
             flash("❌ Invalid OTP!", "error")
 
     return render_template('verify_otp.html')
-# End Signup
 
-# Start Admin DashBoard
-# admin candidate page
-@app.route('/admin/candidate_page', methods=['GET', 'POST'])
-def admin_candidate_page():
-    if request.method == 'POST':
-        username = request.form['firstname']
-        gender = request.form['gender']
-        idcard = request.form['idcard']
-        email = request.form['email']
-        party_name = request.form['party_name'] 
-        profile_pic = request.files.get('profile_pic')
-        party_logo = request.files.get('party_logo')
-
-        # save uploaded images
-        profile_pic_filename = None
-        party_logo_filename = None
-
-        if profile_pic and allowed_file(profile_pic.filename):
-            profile_pic_filename = secure_filename(profile_pic.filename)
-            profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_filename))
-
-        if party_logo and allowed_file(party_logo.filename):
-            party_logo_filename = secure_filename(party_logo.filename)
-            party_logo.save(os.path.join(app.config['UPLOAD_FOLDER'], party_logo_filename))
-
-        # generate OTP
-        otp = str(random.randint(100000, 999999))
-        session['otp'] = otp
-        session['user_data'] = {
-            'username': username,
-            'gender': gender,
-            'idcard': idcard,
-            'email': email,
-            'party_name': party_name,
-            'party_logo': party_logo_filename,
-            'profile_pic': profile_pic_filename
-        }
-
-        # send OTP via email
-        try:
-            msg = EmailMessage()
-            msg['Subject'] = 'Your OTP Verification Code'
-            msg['From'] = "shmurtazaahmad334@gmail.com"
-            msg['To'] = email
-            msg.set_content(f"Your OTP code is: {otp}")
-
-            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login("shmurtazaahmad334@gmail.com", "lhmv zrnz ecqk ajke")  # Gmail App Password
-                smtp.send_message(msg)
-
-            flash("📧 OTP sent to your email!", "info")
-        except Exception as e:
-            flash(f"❌ Error sending OTP: {e}", "error")
-
-        return redirect(url_for('verify_candidate_otp'))
-
-    return render_template('admin/candidate_page.html')
-
-# admin verify otp candidate
-@app.route('/admin/verify_candidate_otp', methods=['GET', 'POST'])
-def verify_candidate_otp():
-    if request.method == 'POST':
-        entered_otp = request.form['otp']
-
-        if entered_otp == session.get('otp'):
-            data = session.get('user_data')
-            try:
-                conn = mysql.connector.connect(**db_config)
-                cursor = conn.cursor()
-                cursor.execute("""
-                    INSERT INTO candidate (candidate_name, gender, id_card, email, profile_pic, party_logo, party_name)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (
-                    data['username'],
-                    data['gender'],
-                    data['idcard'],
-                    data['email'],
-                    data['profile_pic'],
-                    data['party_logo'],
-                    data['party_name']
-                ))
-                conn.commit()
-                cursor.close()
-                conn.close()
-
-                session.pop('otp', None)
-                session.pop('user_data', None)
-
-                flash("✅ Candidate registered successfully!", "success")
-                return redirect(url_for('admin_candidate_page'))
-            except Exception as e:
-                flash(f"❌ Database error: {e}", "error")
-        else:
-            flash("❌ Invalid OTP!", "error")
-
-    return render_template('/admin/verify_candidate_otp.html')
-
-# admin candidate list page
+# ADMIN candidate list
 @app.route('/admin/candidate_list_page')
 def admin_candidate_list_page():
     cnic = request.args.get('id_card')
     records = []
-
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-
-        if cnic:  # agar filter apply ho
+        if cnic:
             cursor.execute("SELECT * FROM candidate WHERE id_card = %s ORDER BY id DESC", (cnic,))
-        else:  # warna sab records show karo
+        else:
             cursor.execute("SELECT * FROM candidate ORDER BY id DESC")
-
         records = cursor.fetchall()
-
     except Exception as e:
         print("Error:", e)
-
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
+    return render_template('admin/candidate_list_page.html', records=records, cnic=cnic)
 
-    return render_template('/admin/candidate_list_page.html', records=records, cnic=cnic)
-
-# Route for export candidate list CSV
-@app.route('/export_candidate_csv')
-def export_candidate_csv():    
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM candidate ORDER BY id DESC")
-        records = cursor.fetchall()
-
-    except Exception as e:
-        print("Error:", e)
-        records = []
-
-    finally:
-        cursor.close()
-        conn.close()
-       
-    si = [] 
-    header = ["ID", "Candidate Name", "Gender", "ID Card", "Email", "Party Name", "Party Logo", "Profile Pic"]
-
-    si.append(header)
-    for r in records:
-        si.append([
-            r['id'],
-            r['candidate_name'],
-            r['gender'],
-            f'="{r["id_card"]}"',
-            r['email'],
-            r['party_name'],
-            r['party_logo'],
-            r['profile_pic']
-        ])
-
-    # Convert to CSV string
-    output = ""
-    for row in si:
-        output += ",".join(map(str, row)) + "\n"
-
-    return Response(
-        output,
-        mimetype="text/csv",    
-        headers={"Content-Disposition": "attachment; filename=candidate_data.csv"}
-    )
-
-# Route to delete a voter record
-@app.route('/delete/<string:cnic>', methods=['GET'])
-def candidate_record(cnic):
+# ADMIN: delete candidate (route name changed to avoid conflict)
+@app.route('/admin/delete_candidate/<string:cnic>', methods=['GET'])
+def delete_candidate_record(cnic):
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         cursor.execute("DELETE FROM candidate WHERE id_card = %s", (cnic,))
         conn.commit()
-        flash("✅ Record deleted successfully.", 'success')
+        flash("✅ Candidate record deleted successfully.", 'success')
     except Exception as e:
         flash("❌ Error deleting record.", 'danger')
         print("Delete error:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
     return redirect(url_for('admin_candidate_list_page'))
 
-# admin voter list page
+# ADMIN voter list page
 @app.route('/admin/voter_list_page', methods=['GET'])
 def admin_voter_list_page():
-    cnic = request.args.get('id_card')
-    records = []
-
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-
-        if cnic:  # agar filter apply ho
-            cursor.execute("SELECT * FROM signup WHERE id_card = %s ORDER BY id DESC", (cnic,))
-        else:  # warna sab records show karo
-            cursor.execute("SELECT * FROM signup ORDER BY id DESC")
-
+        id_card = request.args.get('id_card')
+        if id_card:
+            cursor.execute("SELECT * FROM signup WHERE id_card = %s", (id_card,))
+        else:
+            cursor.execute("SELECT * FROM signup")
         records = cursor.fetchall()
-
     except Exception as e:
-        print("Error:", e)
-
+        flash("❌ Error fetching records.", "danger")
+        print("Fetch error:", e)
+        records = []
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
+    return render_template('admin/voter_list_page.html', records=records)
 
-    return render_template('/admin/voter_list_page.html', records=records, cnic=cnic)
-
-# Route for export voter list CSV
-@app.route('/export_voter_csv')
-def export_voter_csv():    
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM signup ORDER BY id DESC")
-        records = cursor.fetchall()
-
-    except Exception as e:
-        print("Error:", e)
-        records = []
-
-    finally:
-        cursor.close()
-        conn.close()
-
-    si = [] 
-    header = ["ID", "User Name", "Gender", "ID Card", "Email", "Password", "Confirm Password", "Role"]
-
-    si.append(header)
-    for r in records:
-        si.append([
-            r['id'],
-            r['user_name'],
-            r['gender'],
-            f'="{r["id_card"]}"',
-            r['email'],
-            r['password'],
-            r['confirm_password'],
-            r['role']
-        ])
-
-    # Convert to CSV string
-    output = ""
-    for row in si:
-        output += ",".join(map(str, row)) + "\n"
-
-    return Response(
-        output,
-        mimetype="text/csv",
-        headers={"Content-Disposition": "attachment; filename=voter_data.csv"}
-    )
-
-# Route to delete a voter record
-@app.route('/delete/<string:cnic>', methods=['GET'])
-def voter_record(cnic):
+# ADMIN: delete voter (route name changed to avoid conflict)
+@app.route('/admin/delete_voter/<string:cnic>', methods=['GET'])
+def delete_voter_record(cnic):
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         cursor.execute("DELETE FROM signup WHERE id_card = %s", (cnic,))
         conn.commit()
-        flash("✅ Record deleted successfully.", 'success')
+        flash("✅ Voter record deleted successfully.", 'success')
     except Exception as e:
         flash("❌ Error deleting record.", 'danger')
         print("Delete error:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
     return redirect(url_for('admin_voter_list_page'))
 
-# admin_see_results
+# ADMIN see results (shared query)
 @app.route('/admin/see_results')
 def admin_see_result():
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor(dictionary=True)
-
-    # count total votes per candidate
     query = """
         SELECT party_name, candidate_name, COUNT(*) as total_votes
         FROM votes_full
@@ -454,11 +297,9 @@ def admin_see_result():
     """
     cursor.execute(query)
     results = cursor.fetchall()
-
     cursor.close()
     conn.close()
-
-    return render_template('/admin/see_results.html', results=results)
+    return render_template('admin/see_results.html', results=results)
 
 # Create new election
 @app.route('/admin/create_election', methods=['GET', 'POST'])
@@ -486,15 +327,15 @@ def create_election():
 
         return redirect(url_for('list_elections'))
 
-    return render_template('/admin/create_election.html')
+    return render_template('admin/create_election.html')
 
-# List elections (with activate/deactivate)
+# admin election list
 @app.route('/admin/elections')
 def list_elections():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM elections ORDER BY id DESC")
+        cursor.execute("SELECT * FROM elections")
         elections = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -502,9 +343,9 @@ def list_elections():
         elections = []
         flash(f"❌ Database error: {e}", "danger")
 
-    return render_template('/admin/elections.html', elections=elections)
+    return render_template('admin/elections.html', elections=elections)
 
-# Activate/Deactivate election
+# admin toggle election 
 @app.route('/admin/toggle_election/<int:election_id>')
 def toggle_election(election_id):
     try:
@@ -522,20 +363,59 @@ def toggle_election(election_id):
         flash(f"❌ Error updating status: {e}", "danger")
 
     return redirect(url_for('list_elections'))
-# End Admin DashBoard
 
-# Start Candidate DashBoard
-# Upload config
-UPLOAD_FOLDER = 'static/images'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+# Notifications System
+def add_notification(message, user_role="admin"):
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO notifications (message, user_role, is_read)
+            VALUES (%s, %s, %s)
+        """, (message, user_role, False))
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        print("❌ Notification error:", e)
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# List all notifications for admin
+@app.route('/admin/notification_alert')
+def admin_notification_alert():
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT * FROM notifications 
+            WHERE user_role = 'admin'
+            ORDER BY created_at DESC
+        """)
+        notifications = cursor.fetchall()
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        notifications = []
+        flash(f"❌ Database error: {e}", "danger")
 
-# helper function
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return render_template('admin/notification_alert.html', notifications=notifications)
 
-# ✅ Candidate Registration
+# Mark notification as read
+@app.route('/admin/mark_read/<int:notif_id>')
+def mark_read(notif_id):
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE notifications SET is_read = TRUE WHERE id = %s", (notif_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        flash("✅ Notification marked as read.", "success")
+    except Exception as e:
+        flash(f"❌ Error updating notification: {e}", "danger")
+
+    return redirect(url_for('admin_notification_alert'))
+
+# Candidate routes (voter-facing candidate registration)
 @app.route('/candidate/candidate_page', methods=['GET', 'POST'])
 def candidate_candidate_page():
     if request.method == 'POST':
@@ -543,23 +423,13 @@ def candidate_candidate_page():
         gender = request.form['gender']
         idcard = request.form['idcard']
         email = request.form['email']
-        party_name = request.form['party_name'] 
+        party_name = request.form['party_name']
         profile_pic = request.files.get('profile_pic')
         party_logo = request.files.get('party_logo')
 
-        # save uploaded images
-        profile_pic_filename = None
-        party_logo_filename = None
+        profile_pic_filename = save_uploaded_file(profile_pic)
+        party_logo_filename = save_uploaded_file(party_logo)
 
-        if profile_pic and allowed_file(profile_pic.filename):
-            profile_pic_filename = secure_filename(profile_pic.filename)
-            profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_filename))
-
-        if party_logo and allowed_file(party_logo.filename):
-            party_logo_filename = secure_filename(party_logo.filename)
-            party_logo.save(os.path.join(app.config['UPLOAD_FOLDER'], party_logo_filename))
-
-        # generate OTP
         otp = str(random.randint(100000, 999999))
         session['otp'] = otp
         session['user_data'] = {
@@ -572,122 +442,135 @@ def candidate_candidate_page():
             'profile_pic': profile_pic_filename
         }
 
-        # send OTP via email
-        try:
-            msg = EmailMessage()
-            msg['Subject'] = 'Your OTP Verification Code'
-            msg['From'] = "shmurtazaahmad334@gmail.com"
-            msg['To'] = email
-            msg.set_content(f"Your OTP code is: {otp}")
-
-            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login("shmurtazaahmad334@gmail.com", "lhmv zrnz ecqk ajke")  # Gmail App Password
-                smtp.send_message(msg)
-
+        ok, err = send_email(email, 'Your OTP Verification Code', f"Your OTP code is: {otp}")
+        if ok:
             flash("📧 OTP sent to your email!", "info")
-        except Exception as e:
-            flash(f"❌ Error sending OTP: {e}", "error")
+        else:
+            flash(f"❌ Error sending OTP: {err}", "error")
 
         return redirect(url_for('candidate_verify_candidate_otp'))
 
     return render_template('candidate/candidate_page.html')
 
-# ✅ Candidate OTP Verification
+# candidate verify candidate otp
 @app.route('/candidate/verify_candidate_otp', methods=['GET', 'POST'])
 def candidate_verify_candidate_otp():
     if request.method == 'POST':
         entered_otp = request.form['otp']
-
         if entered_otp == session.get('otp'):
             data = session.get('user_data')
-            try:
-                conn = mysql.connector.connect(**db_config)
-                cursor = conn.cursor()
-                cursor.execute("""
-                    INSERT INTO candidate (candidate_name, gender, id_card, email, profile_pic, party_logo, party_name)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (
-                    data['username'],
-                    data['gender'],
-                    data['idcard'],
-                    data['email'],
-                    data['profile_pic'],
-                    data['party_logo'],
-                    data['party_name']
-                ))
-                conn.commit()
-                cursor.close()
-                conn.close()
-
+            ok, err = insert_candidate_to_db(data)
+            if ok:
                 session.pop('otp', None)
                 session.pop('user_data', None)
-
                 flash("✅ Candidate registered successfully!", "success")
                 return redirect(url_for('candidate_candidate_page'))
-            except Exception as e:
-                flash(f"❌ Database error: {e}", "error")
+            else:
+                flash(f"❌ Database error: {err}", "error")
         else:
             flash("❌ Invalid OTP!", "error")
 
     return render_template('candidate/verify_candidate_otp.html')
 
-# candidate list
+# candidate candidate list
 @app.route('/candidate/candidate_list', methods=['GET'])
 def candidate_voter_list_page():
     cnic = request.args.get('id_card')
     records = []
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        if cnic:
+            cursor.execute("SELECT * FROM candidate WHERE id_card = %s ORDER BY id DESC", (cnic,))
+        else:
+            cursor.execute("SELECT * FROM candidate ORDER BY id DESC")
+        records = cursor.fetchall()
+    except Exception as e:
+        print("Error:", e)
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+    return render_template('candidate/candidate_list.html', records=records, cnic=cnic)
 
+# candidate see result
+@app.route('/candidate/see_results')
+def candidate_see_result():
+    conn = None
+    cursor = None
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
 
-        if cnic:  # agar filter apply ho
-            cursor.execute("SELECT * FROM candidate WHERE id_card = %s ORDER BY id DESC", (cnic,))
-        else:  # warna sab records show karo
-            cursor.execute("SELECT * FROM candidate ORDER BY id DESC")
+        # Latest active election
+        cursor.execute("SELECT * FROM elections WHERE is_active = TRUE ORDER BY id DESC LIMIT 1")
+        election = cursor.fetchone()
 
-        records = cursor.fetchall()
+        if not election:
+            return render_template(
+                'candidate/see_results.html',
+                results=None,
+                election=None,
+            )
+
+        # Current time
+        now = datetime.now()
+
+        # Check if election not started
+        if now < election['start_date']:
+            return render_template(
+                'candidate/see_results.html',
+                results=None,
+                election=election,
+                message="⏳ Results will be available after voting starts."
+            )
+
+        # Check if election still running
+        if now < election['end_date']:
+            return render_template(
+                'candidate/see_results.html',
+                results=None,
+                election=election,
+                message="🗳️ Results will be available after voting ends."
+            )
+
+        # ✅ Election ended → show results
+        query = """
+            SELECT party_name, candidate_name, COUNT(*) as total_votes
+            FROM votes_full
+            GROUP BY party_name, candidate_name
+            ORDER BY total_votes DESC;
+        """
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        return render_template(
+            'candidate/see_results.html',
+            results=results,
+            election=election,
+            message=None
+        )
 
     except Exception as e:
-        print("Error:", e)
+        print("Error fetching results:", e)
+        return render_template(
+            'candidate/see_results.html',
+            results=None,
+            election=None,
+            message="❌ Error loading results."
+        )
 
     finally:
-        if cursor: cursor.close()
-        if conn: conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
-    return render_template('/candidate/candidate_list.html', records=records, cnic=cnic)
-
-# candidate result screen
-@app.route('/candidate/see_results')
-def candidate_see_result():
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor(dictionary=True)
-
-    # count total votes per candidate
-    query = """
-        SELECT party_name, candidate_name, COUNT(*) as total_votes
-        FROM votes_full
-        GROUP BY party_name, candidate_name
-        ORDER BY total_votes DESC;
-    """
-    cursor.execute(query)
-    results = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    return render_template('/candidate/see_results.html', results=results)
-# End Candidate DashBoard
-
-# Start Voter DashBoard
-# VOTING REGISTRATION 
+# Voter registration & voting
 @app.route('/voter/voteing_registration', methods=['GET', 'POST'])
 def voter_voteing_registration():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-
-        # 👉 Active election fetch
         cursor.execute("""
             SELECT * FROM elections 
             WHERE is_active = TRUE 
@@ -703,7 +586,6 @@ def voter_voteing_registration():
         if election:
             election_start = election['start_date']
             election_end = election['end_date']
-
             now = datetime.now()
             if election_start <= now <= election_end:
                 election_active = True
@@ -716,29 +598,16 @@ def voter_voteing_registration():
             idcard = request.form['idcard']
             email = request.form['email']
 
-            # generate OTP
             otp = str(random.randint(100000, 999999))
             session['otp'] = otp
-            session['user_data'] = {
-                'idcard': idcard,
-                'email': email
-            }
+            session['user_data'] = {'idcard': idcard, 'email': email}
 
-            try:
-                msg = EmailMessage()
-                msg['Subject'] = 'Voting OTP Verification'
-                msg['From'] = "shmurtazaahmad334@gmail.com"
-                msg['To'] = email
-                msg.set_content(f"Your voting OTP is: {otp}")
-
-                with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                    smtp.login("shmurtazaahmad334@gmail.com", "lhmv zrnz ecqk ajke")
-                    smtp.send_message(msg)
-
+            ok, err = send_email(email, 'Voting OTP Verification', f"Your voting OTP is: {otp}")
+            if ok:
                 flash("📧 OTP sent to your email. Please verify.", "info")
                 return redirect(url_for('voting_verify_voting_otp'))
-            except Exception as e:
-                flash(f"❌ Error sending OTP: {e}", "danger")
+            else:
+                flash(f"❌ Error sending OTP: {err}", "danger")
 
         cursor.close()
         conn.close()
@@ -746,15 +615,14 @@ def voter_voteing_registration():
     except Exception as e:
         flash(f"❌ Database error: {e}", "danger")
 
-    # 🟢 election info frontend me pass karenge
     return render_template(
-        '/voter/voteing_registration.html',
+        'voter/voteing_registration.html',
         election_active=election_active,
         election_start=election_start,
         election_end=election_end
     )
 
-# verify otp voting registration
+# voter verify otp
 @app.route('/voter/verify_voting_otp', methods=['GET', 'POST'])
 def voting_verify_voting_otp():
     if request.method == 'POST':
@@ -771,26 +639,22 @@ def voting_verify_voting_otp():
                 conn.commit()
                 cursor.close()
                 conn.close()
-
                 session.pop('otp', None)
                 session.pop('user_data', None)
-
                 return redirect(url_for('voter_voting_page'))
             except Exception as e:
                 flash(f"❌ Database error: {e}", "error")
         else:
             flash("❌ Invalid OTP!", "error")
 
-    return render_template('/voter/verify_voting_otp.html')
+    return render_template('voter/verify_voting_otp.html')
 
-# voting page
+# voter voting page
 @app.route('/voter/voting_page', methods=['GET', 'POST'])
 def voter_voting_page():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-
-        # 👉 Fetch the latest active election
         cursor.execute("""
             SELECT * FROM elections 
             WHERE is_active = TRUE 
@@ -806,20 +670,16 @@ def voter_voting_page():
         if election:
             election_start = election['start_date']
             election_end = election['end_date']
-
-            # check if current time is between start & end
             now = datetime.now()
             if election_start <= now <= election_end:
                 election_active = True
 
-        # 👉 Fetch candidates
         cursor.execute("""
             SELECT candidate_name, gender, id_card, email, party_name, party_logo, profile_pic 
             FROM candidate
         """)
         candidates = cursor.fetchall()
 
-        # 👉 Handle vote submission
         if request.method == 'POST':
             if not election_active:
                 flash("❌ Voting is closed!", "danger")
@@ -835,7 +695,6 @@ def voter_voting_page():
                 flash("❌ Invalid candidate selected!", "danger")
                 return redirect(url_for('voter_voting_page'))
 
-            # ✅ Insert vote
             cursor2 = conn.cursor()
             cursor2.execute("""
                 INSERT INTO votes_full 
@@ -852,7 +711,6 @@ def voter_voting_page():
             ))
             conn.commit()
             cursor2.close()
-
             flash("✅ Your vote has been recorded successfully!", "success")
             return redirect(url_for('voter_voting_page'))
 
@@ -864,56 +722,83 @@ def voter_voting_page():
         return redirect(url_for('voter_voting_page'))
 
     return render_template(
-        '/voter/voting_page.html',
+        'voter/voting_page.html',
         candidates=candidates,
         election_active=election_active,
         election_start=election_start,
         election_end=election_end
     )
 
-# Result screen
+# voter see result
 @app.route('/voter/see_results')
 def voter_results():
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor(dictionary=True)
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
 
-    # count total votes per candidate
-    query = """
-        SELECT party_name, candidate_name, COUNT(*) as total_votes
-        FROM votes_full
-        GROUP BY party_name, candidate_name
-        ORDER BY total_votes DESC;
-    """
-    cursor.execute(query)
-    results = cursor.fetchall()
+        # Get the latest active election
+        cursor.execute("SELECT * FROM elections WHERE is_active = TRUE ORDER BY id DESC LIMIT 1")
+        election = cursor.fetchone()
 
-    cursor.close()
-    conn.close()
+        # If no active election
+        if not election:
+            return render_template('voter/see_results.html', results=None, election_start=None, election_end=None)
 
-    return render_template('/voter/see_results.html', results=results)
-# End Voter DashBoard
+        now = datetime.now()
+        # If election hasn't ended yet, do not show results
+        if now < election['end_date']:
+            return render_template(
+                'voter/see_results.html',
+                results=None,
+                election_start=election['start_date'],
+                election_end=election['end_date']
+            )
 
-# admin page
+        # Election ended → fetch results
+        cursor.execute("""
+            SELECT party_name, candidate_name, COUNT(*) as total_votes
+            FROM votes_full
+            GROUP BY party_name, candidate_name
+            ORDER BY total_votes DESC;
+        """)
+        results = cursor.fetchall()
+
+        return render_template(
+            'voter/see_results.html',
+            results=results,
+            election_start=election['start_date'],
+            election_end=election['end_date']
+        )
+
+    except Exception as e:
+        print("Error fetching results:", e)
+        return render_template('voter/see_results.html', results=None, election_start=None, election_end=None)
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+# admin admin home ppage
 @app.route('/admin/admin_page', methods=['GET', 'POST'])
 def admin_page():
-    return render_template('/admin/admin_page.html')
+    return render_template('admin/admin_page.html')
 
-# admin page
+# candidate candidate home page
 @app.route('/candidate/candidate_home_page', methods=['GET', 'POST'])
 def candidate_candidate_home_page():
-    return render_template('/candidate/candidate_home_page.html')
+    return render_template('candidate/candidate_home_page.html')
 
-# Voter home page
+# voter voter home page
 @app.route('/voter/voter_home_page')
 def voter_voter_home_page():
-    return render_template('/voter/voter_home_page.html')
+    return render_template('voter/voter_home_page.html')
 
-# Voter home page
+# voter polling station location
 @app.route('/voter/polling_station_location')
 def voter_polling_station_location():
-    return render_template('/voter/polling_station_location.html')
+    return render_template('voter/polling_station_location.html')
 
 # Flask App Run
 if __name__ == '__main__':
     app.run(host="192.168.100.10", port=5000, debug=True)
-    # app.run(debug=True)

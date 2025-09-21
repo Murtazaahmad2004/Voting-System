@@ -2,7 +2,7 @@ create database voting_system;
 use voting_system;
 
 INSERT INTO signup (user_name, gender, id_card, email, password, confirm_password, role) 
-VALUES ('Murtaza Ahmad', 'Male', '3730181884439', 'murtazaahmad2004@gmail.com', '2004', '2004', 'admin');
+VALUES ('Murtaza Ahmad', 'male', '3730181884439', 'murtazaahmad2004@gmail.com', '2004', '2004', 'admin');
 
 -- USERS (signup table)
 CREATE TABLE signup (
@@ -70,11 +70,11 @@ CREATE TABLE elections (
     is_active BOOLEAN DEFAULT FALSE
 );
 
--- BALLOTS (linked to elections)
-CREATE TABLE ballots (
+-- notifications --
+CREATE TABLE notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    election_id INT,
-    seat_name VARCHAR(255),
-    choice_type ENUM('single', 'multiple') DEFAULT 'single',
-    FOREIGN KEY (election_id) REFERENCES elections(id) ON DELETE CASCADE
+    message TEXT NOT NULL,
+    user_role ENUM('admin','voter','candidate','all') DEFAULT 'all',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read BOOLEAN DEFAULT FALSE
 );

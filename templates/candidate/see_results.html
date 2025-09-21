@@ -16,7 +16,10 @@
     </div>
 
     <div class="container">
-        <h2 class="text-center">Voting Results</h2>
+    <h2 class="text-center">Voting Results</h2>
+
+    {% if results %}
+        <!-- ✅ Show results table -->
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
                 <tr>
@@ -35,9 +38,23 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
+    {% else %}
+        <!-- ❌ Election Closed / Message -->
+        <div class="alert alert-warning text-center">
+            <h2>❌ Result is currently closed!</h2>
+            {% if election and election.start_date and election.end_date %}
+                <p>
+                    Please come back between 
+                    <b>{{ election.start_date.strftime('%Y-%m-%d %H:%M') }}</b> 
+                    and 
+                    <b>{{ election.end_date.strftime('%Y-%m-%d %H:%M') }}</b>.
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
     <div class="footer">
         <p>&copy; 2023 Voting System. All rights reserved.</p>
-  </div>
+    </div>
 </body>
 </html>

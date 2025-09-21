@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="{{ url_for('static', filename='script/main.js') }}"></script>
@@ -11,11 +12,12 @@
 <body>
   <!-- Sidebar -->
   <div class="sidebar">
-    <a href="/voter/voter_home_page">Home Page</a>
-    <a href="/voter/voteing_registration">Voting Registration</a>
-    <a href="/voter/see_results">Voting Results</a>
-    <a href="/voter/polling_station_location">Polling Stations Locations</a>
-    <a href="/login">Logout</a>
+    <a href="/voter/voter_home_page"><i class="fa-solid fa-house"></i> Home Page</a>
+    <a href="/voter/voteing_registration"><i class="fa-solid fa-clipboard-list"></i> Voting Registration</a>
+    <a href="/voter/see_results"><i class="fa-solid fa-poll"></i> Voting Results</a>
+    <a href="/voter/voting_page"><i class="fa-solid fa-vote-yea"></i> Voting Page</a>
+    <a href="/voter/polling_station_location"><i class="fa-solid fa-map-location-dot"></i> Polling Stations Locations</a>
+    <a href="/login"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
   </div>
 
   <!-- Toggle Button -->

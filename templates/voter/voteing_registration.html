@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <title>Voter Registration</title>
+    <title>Voter Registration (Voter)</title>
 </head>
 <body>
     {% include '/voter/voter_sidebar.html' %}
+
     <div class="navbar">
-      <h1>Voter Registration Page</h1>
+        <h1>Voter Registration Page</h1>
     </div>
 
-    <div class="container">
+    <div class="voting-registration-container">
         <h1 class="text-center">Voter Registration</h1>
 
         <!-- Flash Messages -->
@@ -27,28 +28,22 @@
         {% endwith %}
 
         {% if election_active %}
-            <!-- ✅ Registration Form -->
-            <form method="POST" action="/voter/voteing_registration" class="form-horizontal">
+            <!-- Registration Form -->
+            <form method="POST" action="/voter/voteing_registration">
                 <div class="form-group">
-                    <label for="idcard" class="control-label col-sm-2">ID Card:</label>
-                    <div class="col-sm-10">
-                        <input type="text" name="idcard" class="form-control" required>
-                    </div>
+                    <label for="idcard">ID Card:</label>
+                    <input type="text" name="idcard" class="form-control" placeholder="Enter ID Card" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="email" class="control-label col-sm-2">Email:</label>
-                    <div class="col-sm-10">
-                        <input type="email" name="email" class="form-control" required>
-                    </div>
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" class="form-control" placeholder="Enter Email" required>
                 </div>
 
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Register & Get OTP</button>
-                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
             </form>
         {% else %}
-            <!-- ❌ Registration Closed Message -->
+            <!-- Registration Closed Message -->
             <div>
                 <h2>❌ Voter Registration is currently closed!</h2>
                 {% if election_start and election_end %}
@@ -61,8 +56,9 @@
             </div>
         {% endif %}
     </div>
-    <div class="footer">
-      <p>&copy; 2023 Voting System. All rights reserved.</p>
+
+    <div class="footer text-center">
+        <p>&copy; 2023 Voting System. All rights reserved.</p>
     </div>
 </body>
 </html>

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="{{ url_for('static', filename='script/main.js') }}"></script>
@@ -11,19 +12,19 @@
 <body>
   <!-- Sidebar -->
   <div class="sidebar">
-    <a href="/admin/admin_page">Home Page</a>
-    <a href="#">DashBoard</a>
-    <a href="/admin/voter_list_page">Role Management</a>
-    <a href="/admin/candidate_page">New Candidate</a>
-    <a href="/admin/candidate_list_page">Candidate/Party Management</a>
-    <a href="/admin/see_results">Voting Results</a>
-    <!-- <a href="#">Election Management</a> -->
-    <a href="/admin/create_election">Create New Election</a>
-    <a href="/admin/elections">Elections</a>
-    <a href="#">Notifications & Alerts</a>
-    <a href="/login">Logout</a>
+    <a href="/admin/admin_page"><i class="fa-solid fa-house"></i> Home Page</a>
+    <a href="#"><i class="fa-solid fa-chart-line"></i> DashBoard</a>
+    <a href="/admin/voter_list_page"><i class="fa-solid fa-users-gear"></i> Role Management</a>
+    <a href="/admin/candidate_page"><i class="fa-solid fa-user-plus"></i> New Candidate</a>
+    <a href="/admin/candidate_list_page"><i class="fa-solid fa-user-tie"></i> Candidate Management</a>
+    <a href="/admin/see_results"><i class="fa-solid fa-poll"></i> Voting Results</a>
+    <a href="/admin/create_election"><i class="fas fa-plus-circle"></i> Create New Election</a>
+    <a href="/admin/elections"><i class="fas fa-list"></i> Elections</a>
+    <a href="/admin/notification_alert"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="/login"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
   </div>
   <!-- Toggle Button -->
   <div class="toggle-btn" onclick="toggleSidebar()">☰</div>
 </body>
 </html>
+
