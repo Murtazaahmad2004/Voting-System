@@ -1,7 +1,7 @@
 import random
 import os
 from datetime import datetime
-from flask import Flask, Response, render_template, request, redirect, session, url_for, flash
+from flask import Flask, Response, jsonify, render_template, request, redirect, session, url_for, flash
 from flask_cors import CORS
 import mysql.connector
 import smtplib
@@ -19,6 +19,15 @@ db_config = {
     'password': 'NHA@2004',
     'database': 'voting_system'
 }
+
+def get_db_connection():
+    conn = mysql.connector.connect(
+        host=db_config['host'],
+        user=db_config['user'],
+        password=db_config['password'],
+        database=db_config['database']
+    )
+    return conn
 
 # Upload config (single place)
 UPLOAD_FOLDER = 'static/images'
@@ -778,6 +787,61 @@ def voter_results():
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
+
+# Votes per candidate
+@app.route("/chart/votes")
+def votes_chart():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT candidate_name, COUNT(*) AS total_votes
+        FROM votes_full
+        GROUP BY candidate_name
+        ORDER BY total_votes DESC
+    """)
+    rows = cursor.fetchall()
+    labels = [r[0] for r in rows]
+    votes = [int(r[1]) for r in rows]
+    data = {
+        "labels": labels,
+        "datasets": [{
+            "label": "Total Votes",
+            "data": votes
+        }]
+    }
+    cursor.close()
+    conn.close()
+    return jsonify(data)
+
+# Votes per party
+@app.route("/chart/parties")
+def parties_chart():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT party_name, COUNT(*) AS total_votes
+        FROM votes_full
+        GROUP BY party_name
+        ORDER BY total_votes DESC
+    """)
+    rows = cursor.fetchall()
+    labels = [r[0] for r in rows]
+    votes = [int(r[1]) for r in rows]
+    data = {
+        "labels": labels,
+        "datasets": [{
+            "label": "Votes by Party",
+            "data": votes
+        }]
+    }
+    cursor.close()
+    conn.close()
+    return jsonify(data)
+
+# DashBoard Route
+@app.route("/admin/dashboard")
+def admin_dashboard():
+    return render_template("admin/dashboard.html")
 
 # admin admin home ppage
 @app.route('/admin/admin_page', methods=['GET', 'POST'])

@@ -787,6 +787,78 @@ h2 {
 }
 
 /* ======================
+   Dashboard Card for Charts
+   ====================== */
+.dashboard-card {
+    width: 100%;
+    margin: 30px auto;
+    background: #d6d2d2;
+    border-radius: 12px;
+    padding: 20px 25px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    margin-bottom: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+.dashboard-card h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #3742fa;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: #fff;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+.card h6 {
+    color: #3742fa;
+    font-weight: 600;
+}
+
+.card p {
+    color: #283fa7;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/* ======================
+   Chart Canvas Styling
+   ====================== */
+.dashboard-card canvas {
+    width: 100% !important;
+    height: 280px !important;
+}
+
+/* ======================
+   Responsive Adjustments
+   ====================== */
+@media (max-width: 768px) {
+    .dashboard-card canvas {
+        height: 220px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-card canvas {
+        height: 180px !important;
+    }
+}
+
+/* ======================
    id_card
    ====================== */
 .id_card {
