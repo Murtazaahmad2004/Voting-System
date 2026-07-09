@@ -865,4 +865,4 @@ def voter_polling_station_location():
 
 # Flask App Run
 if __name__ == '__main__':
-    app.run(host="192.168.100.10", port=5000, debug=True)
+    app.run(debug=True)
