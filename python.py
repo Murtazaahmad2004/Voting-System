@@ -42,11 +42,11 @@ def send_email(to_email: str, subject: str, body: str):
     try:
         msg = EmailMessage()
         msg['Subject'] = subject
-        msg['From'] = "shmurtazaahmad334@gmail.com"
+        msg['From'] = "parkflow101@gmail.com"
         msg['To'] = to_email
         msg.set_content(body)
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login("shmurtazaahmad334@gmail.com", "lhmv zrnz ecqk ajke")  # Gmail App Password
+            smtp.login("parkflow101@gmail.com", "majq teeu gcyr kpgn")  # Gmail App Password
             smtp.send_message(msg)
         return True, None
     except Exception as e:
