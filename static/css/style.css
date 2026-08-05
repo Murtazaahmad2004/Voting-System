@@ -9,18 +9,33 @@ body {
 }
 
 body.signup-page {
-  overflow: hidden;
-  height: 100vh;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* Global Box Sizing & Responsive Media */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+img,
+video,
+canvas {
+    max-width: 100%;
+    height: auto;
 }
 
 /* ======================
-   Text Area
+   Text & Form Elements
    ====================== */
-.form-group{
-  overflow: hidden;
+.form-group {
+    overflow: hidden;
 }
 
-h1, h2 {
+h1,
+h2 {
     text-align: center;
 }
 
@@ -48,6 +63,7 @@ button {
     border: none;
     border-radius: 3px;
     cursor: pointer;
+    transition: background 0.3s ease;
 }
 
 button:hover {
@@ -72,8 +88,13 @@ a:hover {
     font-weight: bold;
 }
 
-.flash.error { color: red; }
-.flash.success { color: green; }
+.flash.error {
+    color: red;
+}
+
+.flash.success {
+    color: green;
+}
 
 /* ======================
    Navbar
@@ -131,15 +152,112 @@ a:hover {
 }
 
 /* ======================
+   Sidebar
+   ====================== */
+.sidebar {
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #003366;
+    padding-top: 60px;
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    z-index: 1000;
+}
+
+.sidebar a {
+    display: block;
+    padding: 18px 22px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background 0.3s;
+}
+
+.sidebar a:hover {
+    background: #002244;
+}
+
+.sidebar .active {
+    background: #f1c40f;
+    color: #003366 !important;
+    font-weight: bold;
+}
+
+.sidebar i {
+    margin-right: 10px;
+}
+
+.sidebar.show {
+    left: 0;
+}
+
+.sidebar.collapsed {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.toggle-btn {
+    position: fixed;
+    top: 2px;
+    left: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    background: #003366;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: none;
+    z-index: 1100;
+    transition: background 0.3s ease;
+}
+
+.toggle-btn:hover {
+    background: #0055aa;
+}
+
+.collapsed .main-content {
+    margin-left: 0;
+}
+
+/* ======================
+   Main Content
+   ====================== */
+.main-content {
+    align-items: center;
+    padding: 20px;
+}
+
+/* ======================
+   Containers (Shared)
+   ====================== */
+.verify-container,
+.login-container,
+.signup-container,
+.voting-registration-container,
+.create-election-container,
+.candidate-container,
+.voter-container,
+.voting_page,
+.id_card {
+    width: min(95%, 520px);
+    max-width: 520px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* ======================
    Verify Container
    ====================== */
 .verify-container {
-    width: 350px;
     margin: 180px auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     text-align: center;
 }
 
@@ -148,203 +266,27 @@ a:hover {
     margin: 10px auto;
     display: block;
     color: black;
+    text-align: center;
+    font-size: 18px;
+    letter-spacing: 4px;
 }
 
 .verify-container button {
     width: 70%;
     margin: 10px auto;
     display: block;
-    color: #fff;
-}
-
-.verify-container input[type="text"] {
-    text-align: center;
-    font-size: 18px;
-    letter-spacing: 4px;
 }
 
 /* ======================
-   Sidebar
+   Login & Signup Containers
    ====================== */
-.sidebar {
-  height: 100vh;
-  width: 220px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: #003366;
-  padding-top: 60px;
-  transition: all 0.3s ease;
-  overflow-x: hidden;
-  z-index: 1000;
-}
-
-.sidebar a {
-  display: block;
-  padding: 18px 22px;
-  color: #fff;
-  text-decoration: none;
-  font-size: 15px;
-  transition: background 0.3s;
-}
-
-.sidebar a:hover {
-  background: #002244;
-}
-
-.sidebar .active {
-  background: #f1c40f;
-  color: #003366 !important;
-  font-weight: bold;
-}
-
-.toggle-btn {
-  position: fixed;
-  top: 2px;
-  left: 15px;
-  font-size: 22px;
-  cursor: pointer;
-  background: #003366;
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 5px;
-  transition: none;
-  z-index: 1100;
-}
-
-.toggle-btn:hover {
-  background: #0055aa;
-}
-
-.collapsed .sidebar {
-  width: 0;
-  padding: 0;
-}
-
-.collapsed .main-content {
-  margin-left: 0;
-}
-
-.collapsed .toggle-btn {
-  left: 15px;
-}
-
-/* ======================
-   voter container
-   ====================== */
-.voter-container {
-    width: 380px;
-    margin: 300px auto;
-    padding: 30px 25px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-.voter-container h1,
-.voter-container p {
-    font-weight: bold;
-}
-
-/* ======================
-   voting page
-   ====================== */
-.voting_page {
-    width: 600px;
-    margin: 40px auto;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-.voting_page h1 {
-    font-size: large;
-}
-
-/* ======================
-   profile pic
-   ====================== */
-.profile-pic {
-  width: 150px;
-  height: 150px;
-  border-radius: 8px;
-  object-fit: contain;
-  background-color: #f0f0f0;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.profile-pic:hover {
-  transform: scale(1.1);
-}
-
-/* ======================
-   Party Logo Styling (shared)
-   ====================== */
-img.party-logo {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-    border: 2px solid #007bff;
-    border-radius: 8px;
-    padding: 4px;
-    background: #f8f9fa;
-    transition: transform 0.2s ease;
-}
-
-img.party-logo:hover {
-    transform: scale(1.1);
-}
-
-/* ======================
-   Profile Picture Styling (shared)
-   ====================== */
-img.profile-pic {
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
-    border: 2px solid #28a745;
-    border-radius: 8px;
-    padding: 4px;
-    background: #f8f9fa;
-    transition: transform 0.2s ease;
-}
-
-img.profile-pic:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-/* ======================
-   voting-registration-container
-   ====================== */
-.voting-registration-container {
-    width: 380px;
+.login-container,
+.signup-container {
     margin: 120px auto;
-    text-align: left;
-    padding: 30px 25px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    animation: fadeIn 0.5s ease-in-out;
 }
 
-/* ======================
-   Login Styles
-   ====================== */
-.login-container {
-    width: 380px;
-    margin: 120px auto;
-    padding: 30px 25px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-.login-container h1 {
+.login-container h1,
+.signup-container h1 {
     text-align: center;
     margin-bottom: 20px;
     font-size: 26px;
@@ -352,7 +294,14 @@ img.profile-pic:hover {
     font-weight: bold;
 }
 
-.login-container label {
+.signup-container h1 {
+    font-size: 28px;
+    margin-bottom: 25px;
+}
+
+.login-container label,
+.signup-container label,
+.candidate-container label {
     font-size: 14px;
     font-weight: bold;
     color: #333;
@@ -360,81 +309,11 @@ img.profile-pic:hover {
     display: block;
 }
 
+.login-container input,
 .login-container input[type="text"],
 .login-container input[type="email"],
-.login-container input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    transition: border-color 0.3s;
-}
-
-.login-container input:focus {
-    border-color: #283fa7;
-    outline: none;
-}
-
-.login-container button {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg, #283fa7, #1d2d78);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.login-container button:hover {
-    background: linear-gradient(135deg, #1d2d78, #283fa7);
-}
-
-.login-container p {
-    text-align: center;
-    margin-top: 15px;
-    font-size: 14px;
-}
-
-.login-container p a {
-    color: #283fa7;
-    font-weight: bold;
-}
-
-/* ======================
-   Signup Styles
-   ====================== */
-.signup-container {
-    width: 420px;
-    margin: 100px auto;
-    margin-top: 10px;
-    padding: 35px 30px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-.signup-container h1 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 28px;
-    color: #283fa7;
-    font-weight: bold;
-}
-
-.signup-container label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 6px;
-    display: block;
-}
-
+.login-container input[type="password"],
+.signup-container input,
 .signup-container input[type="text"],
 .signup-container input[type="email"],
 .signup-container input[type="password"],
@@ -448,12 +327,15 @@ img.profile-pic:hover {
     transition: border-color 0.3s;
 }
 
+.login-container input:focus,
 .signup-container input:focus,
-.signup-container select:focus {
+.signup-container select:focus,
+.candidate-container select:focus {
     border-color: #283fa7;
     outline: none;
 }
 
+.login-container button,
 .signup-container button {
     width: 100%;
     padding: 12px;
@@ -467,58 +349,29 @@ img.profile-pic:hover {
     transition: background 0.3s ease;
 }
 
+.login-container button:hover,
 .signup-container button:hover {
     background: linear-gradient(135deg, #1d2d78, #283fa7);
 }
 
+.login-container p,
 .signup-container p {
     text-align: center;
     margin-top: 15px;
     font-size: 14px;
 }
 
+.login-container p a,
 .signup-container p a {
     color: #283fa7;
     font-weight: bold;
 }
 
 /* ======================
-   create-election-container
+   Candidate Container
    ====================== */
-.create-election-container {
-    width: 380px;
+.candidate-container {
     margin: 120px auto;
-    padding: 30px 25px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-.create-election-container button {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-/* ======================
-   candidate-container
-   ====================== */
-.candidate-container{
-    width: 380px;
-    margin: 120px auto;
-    padding: 30px 25px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    animation: fadeIn 0.5s ease-in-out;
 }
 
 .candidate-container h1 {
@@ -529,14 +382,6 @@ img.profile-pic:hover {
     font-weight: bold;
 }
 
-.candidate-container label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 6px;
-    display: block;
-}
-
 .candidate-container select {
     width: 100%;
     padding: 12px;
@@ -545,11 +390,6 @@ img.profile-pic:hover {
     border: 1px solid #ccc;
     font-size: 14px;
     transition: border-color 0.3s;
-}
-
-.candidate-container select:focus {
-    border-color: #283fa7;
-    outline: none;
 }
 
 .candidate-container button {
@@ -581,10 +421,136 @@ img.profile-pic:hover {
 }
 
 /* ======================
-   table
+   Voter & Voting Containers
    ====================== */
-.voting_table {
-    position: relative;
+.voter-container h1,
+.voter-container p {
+    font-weight: bold;
+}
+
+.voting_page {
+    width: 600px;
+    margin: 40px auto;
+}
+
+.voting_page h1 {
+    font-size: large;
+}
+
+.voting-registration-container {
+    margin: 120px auto;
+    text-align: left;
+}
+
+/* ======================
+   Images & Icons
+   ====================== */
+.profile-pic,
+img.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid #28a745;
+    padding: 4px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.profile-pic:hover,
+img.profile-pic:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+img.party-logo {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    padding: 4px;
+    background: #f8f9fa;
+    transition: transform 0.2s ease;
+}
+
+img.party-logo:hover {
+    transform: scale(1.1);
+}
+
+/* ======================
+   Tables
+   ====================== */
+table,
+#voterTable,
+#pollingTable {
+    width: 95%;
+    max-width: 100%;
+    margin: 25px auto 40px auto;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+table {
+    width: 80%;
+    margin: auto;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+th,
+td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th,
+#voterTable thead,
+#pollingTable thead {
+    background-color: #283fa7;
+    color: #fff;
+    font-weight: bold;
+}
+
+#voterTable th,
+#voterTable td,
+#pollingTable th,
+#pollingTable td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #eaeaea;
+}
+
+#voterTable th,
+#pollingTable th {
+    font-weight: bold;
+}
+
+#voterTable td,
+#pollingTable td {
+    font-size: 14px;
+}
+
+#pollingTable td {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+caption {
+    caption-side: top;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .table-header {
@@ -599,210 +565,98 @@ img.profile-pic:hover {
     margin: 20px auto;
 }
 
-table {
-  width: 80%;
-  margin: auto;
-  border-collapse: collapse;
-  background: #fff;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 12px 15px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background-color: #007BFF;
-  color: #fff;
-  font-weight: bold;
-}
-
-tr:hover {
-  background-color: #f1f1f1;
-}
-
-caption {
-  caption-side: top;
-  margin-bottom: 10px;
-  font-size: 20px;
-  font-weight: bold;
-}
-
 /* ======================
-   Signup Voters Data Page
+   Alerts & Messages
    ====================== */
-
-/* Page Heading */
-h2 {
-  text-align: center;
-  margin: 30px 0 20px 0;
-  font-size: 26px;
-  font-weight: bold;
-  color: #283fa7;
-}
-
-/* Flash messages */
-.alert {
-  width: 80%;
-  margin: 15px auto;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+.alert,
+.alert-success,
+.alert-error,
+.alert-danger,
+.alert-warning {
+    width: 95%;
+    max-width: 100%;
+    margin: 15px auto;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid;
 }
 
 .alert-success {
-  background: #d4edda;
-  color: #155724;
-  border-left: 5px solid #28a745;
+    background: #d4edda;
+    color: #155724;
+    border-left-color: #28a745;
 }
 
 .alert-error,
 .alert-danger {
-  background: #f8d7da;
-  color: #721c24;
-  border-left: 5px solid #dc3545;
-  width: 600px;
+    background: #f8d7da;
+    color: #721c24;
+    border-left-color: #dc3545;
 }
 
 .alert-warning {
-  background: #fff3cd;
-  color: #856404;
-  border-left: 5px solid #ffc107;
-  width: 600px;
-}
-
-/* Polling Table styling */
-#pollingTable {
-  width: 70%;
-  margin: 25px auto 40px auto;
-  border-collapse: collapse;
-  background: #ffffff;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08);
-}
-
-#pollingTable thead {
-  background: #283fa7;
-  color: #fff;
-}
-
-#pollingTable th,
-#pollingTable td {
-  padding: 12px 15px;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  border-bottom: 1px solid #eaeaea;
-}
-
-#pollingTable tr:hover {
-  font-size: 16px;
-  font-weight: bold;
-  background: #f9f9f9;
-}
-
-/* Table styling */
-#voterTable {
-  width: 70%;
-  margin: 25px auto 40px auto;
-  border-collapse: collapse;
-  background: #ffffff;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08);
-}
-
-#voterTable thead {
-  background: #283fa7;
-  color: #fff;
-}
-
-#voterTable th,
-#voterTable td {
-  padding: 12px 15px;
-  text-align: center;
-  font-size: 14px;
-  border-bottom: 1px solid #eaeaea;
-}
-
-#voterTable tr:hover {
-  background: #f9f9f9;
-}
-
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-}
-
-.icon-button {
-  border: none;
-  background: none;
-  cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.icon-button i {
-  font-size: 18px;
-}
-
-.icon-button.edit i {
-  color: #007bff;
-}
-
-.icon-button.delete i {
-  color: #dc3545;
-}
-
-.icon-button.export-btn i {
-  color: #28a745;
-}
-
-.icon-button:hover {
-  transform: scale(1.2);
-  opacity: 0.85;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  #voterTable {
-    width: 95%;
-    font-size: 13px;
-  }
-  .action-buttons {
-    gap: 8px;
-  }
-  .icon-button i {
-    font-size: 16px;
-  }
+    background: #fff3cd;
+    color: #856404;
+    border-left-color: #ffc107;
 }
 
 /* ======================
-   Dashboard Card for Charts
+   Action Buttons & Icons
+   ====================== */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.icon-button i {
+    font-size: 18px;
+}
+
+.icon-button.edit i {
+    color: #007bff;
+}
+
+.icon-button.delete i {
+    color: #dc3545;
+}
+
+.icon-button.export-btn i {
+    color: #28a745;
+}
+
+.icon-button:hover {
+    transform: scale(1.2);
+    opacity: 0.85;
+}
+
+/* ======================
+   Dashboard & Cards
    ====================== */
 .dashboard-card {
     width: 100%;
-    margin: 30px auto;
+    margin: 30px auto 20px auto;
     background: #d6d2d2;
     border-radius: 12px;
     padding: 20px 25px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    margin-bottom: 20px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .dashboard-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
 }
 
 .dashboard-card h3 {
@@ -812,16 +666,21 @@ h2 {
     color: #3742fa;
 }
 
+.dashboard-card canvas {
+    width: 100% !important;
+    height: 280px !important;
+}
+
 .card {
     border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
     transition: transform 0.2s, box-shadow 0.2s;
     background: #fff;
 }
 
 .card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
 }
 
 .card h6 {
@@ -836,63 +695,35 @@ h2 {
 }
 
 /* ======================
-   Chart Canvas Styling
-   ====================== */
-.dashboard-card canvas {
-    width: 100% !important;
-    height: 280px !important;
-}
-
-/* ======================
-   Responsive Adjustments
-   ====================== */
-@media (max-width: 768px) {
-    .dashboard-card canvas {
-        height: 220px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard-card canvas {
-        height: 180px !important;
-    }
-}
-
-/* ======================
-   id_card
+   ID Card
    ====================== */
 .id_card {
-  max-width: 500px;
-  margin: 0 auto 20px auto;
-  padding: 15px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.08);
-  text-align: left;
+    max-width: 500px;
+    text-align: left;
 }
 
 .id_card label {
-  font-weight: 600;
-  margin-bottom: 8px;
-  display: block;
-  color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: #2c3e50;
 }
 
 .id_card select {
-  margin-bottom: 12px;
-  height: 40px;
-  border-radius: 6px;
+    margin-bottom: 12px;
+    height: 40px;
+    border-radius: 6px;
 }
 
 .id_card button {
-  width: 100%;
-  font-weight: 600;
-  border-radius: 6px;
-  padding: 8px 16px;
+    width: 100%;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 8px 16px;
 }
 
 /* ======================
-   timer box
+   Timer
    ====================== */
 .timer-box {
     text-align: right;
@@ -904,14 +735,19 @@ h2 {
 
 .timer-container {
     text-align: center;
-    margin-top: 100px
+    margin-top: 100px;
 }
 
+/* ======================
+   Overlay
+   ====================== */
 #overlay {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -926,54 +762,152 @@ h2 {
     color: black;
 }
 
+/* ======================
+   Animations
+   ====================== */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ======================
-   Responsive
+   Responsive Design
    ====================== */
-@media (max-width: 400px) {
-    .signup-container,
-    .login-container,
-    .verify-container {
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    select {
-        width: 100%;
-    }
-}
 
-@media (max-width: 500px) {
-    .signup-container,
-    .login-container,
-    .verify-container {
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
+/* Tablets & Small Devices (768px) */
+@media (max-width: 768px) {
+    body.signup-page {
+        overflow: auto;
+        height: auto;
     }
-}
 
-@media (max-width: 600px) {
+    .header {
+        height: auto;
+        padding: 15px;
+    }
+
+    .header h1 {
+        font-size: 22px;
+    }
+
+    .header p {
+        font-size: 14px;
+    }
+
+    .navbar {
+        height: auto;
+        text-align: center;
+        padding: 12px;
+    }
+
     .navbar a {
         display: block;
         margin: 5px 0;
     }
+
+    .main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+
+    .sidebar {
+        left: -250px;
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+    .sidebar.collapsed {
+        width: 220px;
+    }
+
+    th,
+    td {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    button {
+        font-size: 15px;
+    }
+
+    #voterTable {
+        width: 95%;
+        font-size: 13px;
+    }
+
+    .action-buttons {
+        gap: 8px;
+    }
+
+    .icon-button i {
+        font-size: 16px;
+    }
+
+    .dashboard-card canvas {
+        height: 220px !important;
+    }
 }
 
-@media (max-width: 768px) {
-    .signup-container,
-    .login-container,
-    .verify-container {
-        width: 80%;
+/* Mobile Devices (576px) */
+@media (max-width: 576px) {
+    h1 {
+        font-size: 22px;
     }
-    h1, h2 {
+
+    h2 {
         font-size: 20px;
+    }
+
+    p,
+    label {
+        font-size: 14px;
+    }
+
+    input,
+    select,
+    button {
+        font-size: 14px;
+    }
+
+    .profile-pic,
+    img.party-logo,
+    img.profile-pic {
+        width: 60px;
+        height: 60px;
+    }
+
+    .timer-box {
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .footer {
+        position: relative;
+    }
+
+    .dashboard-card canvas {
+        height: 180px !important;
+    }
+}
+
+/* Small Mobile Devices (360px & below) */
+@media (max-width: 360px) {
+    .verify-container,
+    .login-container,
+    .signup-container,
+    .candidate-container,
+    .create-election-container,
+    .voting-registration-container,
+    .voter-container,
+    .voting_page {
+        padding: 15px !important;
     }
 }

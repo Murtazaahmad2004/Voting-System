@@ -1,11 +1,15 @@
 // confirmation popup
 function confirmDelete() {
-    return confirm("Are you sure you want to delete this record?");
+  return confirm("Are you sure you want to delete this record?");
 }
 
 // Sidebar toggle
 function toggleSidebar() {
-  document.body.classList.toggle("collapsed");
+  if(window.innerWidth <= 992) {
+    document.getElementById("sidebar").classList.toggle("show");
+  } else {
+    document.body.classList.toggle("collapsed");
+  }
 }
 
 // Rainbow generator
@@ -20,8 +24,8 @@ function getRainbowColors(count) {
 
 // Candidate Votes Chart
 fetch("/chart/votes")
-  .then(res => res.json())
-  .then(data => {
+  .then((res) => res.json())
+  .then((data) => {
     data.datasets[0].backgroundColor = getRainbowColors(data.labels.length);
     new Chart(document.getElementById("votesChart"), {
       type: "bar",
@@ -30,16 +34,16 @@ fetch("/chart/votes")
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: "Total Votes per Candidate" }
-        }
-      }
+          title: { display: true, text: "Total Votes per Candidate" },
+        },
+      },
     });
   });
 
 // Party Votes Chart
 fetch("/chart/parties")
-  .then(res => res.json())
-  .then(data => {
+  .then((res) => res.json())
+  .then((data) => {
     data.datasets[0].backgroundColor = getRainbowColors(data.labels.length);
     new Chart(document.getElementById("partyChart"), {
       type: "pie",
@@ -48,8 +52,8 @@ fetch("/chart/parties")
         responsive: true,
         plugins: {
           legend: { position: "bottom" },
-          title: { display: true, text: "Total Votes by Party" }
-        }
-      }
+          title: { display: true, text: "Total Votes by Party" },
+        },
+      },
     });
   });

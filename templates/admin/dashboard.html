@@ -11,60 +11,68 @@
     <title>Voting Dashboard</title>
 </head>
 <body>
-  {% include '/admin/admin_sidebar.html' %}
-  <div class="navbar">
-    <h1>Admin Dashboard</h1>
-  </div>
 
-    <h1 class="text-center mb-4">🗳️ Voting Results</h1>
+    {% include '/admin/admin_sidebar.html' %}
 
-    <div class="container mt-4">
-        <!-- Cards Section -->
-        <div class="row g-4">
-            
-           <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="card shadow-sm text-center p-3 card-color">
+    <div class="navbar">
+        <h1>Admin Dashboard</h1>
+    </div>
+
+    <h1 class="text-center">🗳️ Voting Results</h1>
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card card-color">
                     <div class="card-body">
-                        <i class="fas fa-vote-yea fa-3x mb-2"></i>
-                        <h6 class="mt-2">Total Votes Cast</h6>
-                        <p class="fs-4 fw-bold mt-1">1,234</p>
+                        <i class="fas fa-vote-yea fa-3x"></i>
+                        <h6>Total Votes Cast</h6>
+                        <p>1,234</p>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="card shadow-sm text-center p-3 card-color">
+                <div class="card card-color">
                     <div class="card-body">
-                        <i class="fas fa-flag fa-3x mb-2"></i>
-                        <h6 class="mt-2">Name of Winner Party</h6>
-                        <p class="fs-4 fw-bold mt-1">TLP</p>
+                        <i class="fas fa-flag fa-3x"></i>
+                        <h6>Name of Winner Party</h6>
+                        <p>TLP</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    
-  <div class="main-content container">
-    <div class="row">
 
-      <div class="col-md-6">
-        <div class="dashboard-card">
-          <h3>Votes per Candidate</h3>
-          <canvas id="votesChart"></canvas>
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <div class="dashboard-card">
-          <h3>Votes per Party</h3>
-          <canvas id="partyChart"></canvas>
-        </div>
-      </div>
     </div>
-  </div>
+
+    <div class="main-content container">
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h3>Votes per Candidate</h3>
+                    <canvas id="votesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h3>Votes per Party</h3>
+                    <canvas id="partyChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 
     <div class="footer">
-      <p>&copy; 2023 Voting System. All rights reserved.</p>
+        <p>&copy; 2023 Voting System. All rights reserved.</p>
     </div>
+
 </body>
 </html>
