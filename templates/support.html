@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Support</title>
+</head>
+<style>
+    :root{
+  --ink:#122024;
+  --ink-soft:#4b5d61;
+  --paper:#f6f4ef;
+  --card:#ffffff;
+  --line:#e2ddd2;
+  --teal:#1f6f66;
+  --teal-deep:#123c37;
+  --amber:#c98a2c;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  font-family:"Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color:var(--ink);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  padding:32px 16px 80px;
+}
+
+/* --- Tab switcher --- */
+.switcher{
+  display:flex;
+  gap:6px;
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:6px;
+  border-radius:999px;
+  margin-bottom:28px;
+  box-shadow:0 1px 2px rgba(18,32,36,0.04);
+}
+.switcher .tab-btn{
+  border:none;
+  background:transparent;
+  padding:9px 16px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:0.2px;
+  color:var(--ink-soft);
+  border-radius:999px;
+  cursor:pointer;
+  text-decoration:none;
+  transition:background .2s ease, color .2s ease;
+  font-family:inherit;
+}
+.switcher .tab-btn.active{
+  background:var(--teal-deep);
+  color:#fdfaf3;
+}
+
+/* --- Page container --- */
+.page{
+  width:100%;
+  max-width:640px;
+  background:var(--card);
+  border-radius:var(--radius, 18px);
+  border:1px solid var(--line);
+  box-shadow:0 20px 50px -25px rgba(18,32,36,0.25);
+  overflow:hidden;
+}
+.screen{
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  padding:36px 32px 24px;
+  background:var(--teal-deep);
+  color:#fdfaf3;
+}
+.topbar .eyebrow{
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  opacity:0.65;
+  margin:0 0 6px;
+}
+.topbar h1{
+  margin:0;
+  font-size:23px;
+  font-weight:700;
+  letter-spacing:-0.3px;
+}
+.topbar p{
+  margin:8px 0 0;
+  font-size:13px;
+  line-height:1.5;
+  opacity:0.8;
+  max-width:300px;
+}
+
+.content{
+  flex:1;
+  padding:26px 32px 36px;
+}
+
+/* ---- Contact support ---- */
+.contact-option{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  margin-bottom:12px;
+  background:var(--card);
+}
+.contact-option .icon{
+  width:40px; height:40px;
+  border-radius:10px;
+  background:#e8f2ef;
+  color:var(--teal-deep);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+.contact-option .txt strong{
+  display:block;
+  font-size:14px;
+}
+.contact-option .txt span{
+  display:block;
+  font-size:12px;
+  color:var(--ink-soft);
+  margin-top:2px;
+}
+.contact-option .go{
+  margin-left:auto;
+  color:var(--ink-soft);
+  font-size:16px;
+}
+
+.field-label{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.6px;
+  color:var(--ink-soft);
+  margin:22px 0 10px;
+}
+.form-group{ margin-bottom:14px; }
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px 13px;
+  font-size:14px;
+  font-family:inherit;
+  color:var(--ink);
+  background:#fdfcfa;
+}
+.form-group textarea{ min-height:90px; resize:vertical; }
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  outline:2px solid var(--teal);
+  outline-offset:1px;
+}
+.submit-btn{
+  width:100%;
+  background:var(--amber);
+  color:#241705;
+  border:none;
+  padding:14px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:6px;
+}
+.submit-btn:hover{ filter:brightness(0.96); }
+
+.faq-hint{
+  margin-top:24px;
+  padding:14px;
+  border-radius:14px;
+  background:#f1efe6;
+  font-size:12.5px;
+  color:var(--ink-soft);
+  line-height:1.6;
+}
+.faq-hint strong{ color:var(--ink); }
+
+::-webkit-scrollbar{ width:6px; }
+::-webkit-scrollbar-thumb{ background:var(--line); border-radius:10px; }
+</style>
+<body>
+
+  <div class="page">
+    <div class="screen active" id="support">
+      <div class="topbar">
+        <p class="eyebrow">We're here to help</p>
+        <h1>Contact Support</h1>
+        <p>Reach our team directly, or send a message and we'll get back within one business day.</p>
+      </div>
+      <div class="content">
+
+        <div class="contact-option">
+          <div class="icon">✉</div>
+          <div class="txt"><strong>Email us</strong><span>support@yourapp.com</span></div>
+          <div class="go">›</div>
+        </div>
+        <div class="contact-option">
+          <div class="icon">💬</div>
+          <div class="txt"><strong>Live chat</strong><span>Mon–Fri, 9am–6pm</span></div>
+          <div class="go">›</div>
+        </div>
+        <div class="contact-option">
+          <div class="icon">☎</div>
+          <div class="txt"><strong>Call us</strong><span>+92 300 1234567</span></div>
+          <div class="go">›</div>
+        </div>
+
+        <p class="field-label">Send a message</p>
+        <div class="form-group">
+          <input type="text" placeholder="Full name">
+        </div>
+        <div class="form-group">
+          <input type="email" placeholder="Email address">
+        </div>
+        <div class="form-group">
+          <select>
+            <option>Select a topic</option>
+            <option>Account issue</option>
+            <option>Billing question</option>
+            <option>Bug report</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <textarea placeholder="Describe your issue..."></textarea>
+        </div>
+        <button class="submit-btn">Send message</button>
+
+        <div class="faq-hint">
+          <strong>Tip:</strong> Most account and billing questions are answered in our Help Center before you even need to write in.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

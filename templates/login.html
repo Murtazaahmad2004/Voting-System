@@ -3,43 +3,898 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <title>Login</title>
+  <meta name="description" content="Secure voting system login">
+  <title>Voting System - Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="header">
-    <h1>Login Page</h1>
-    <p>Please enter your credentials to login</p>
-  </div>
+  <style>
+    /* ===========================
+   VARIABLES & ROOT STYLES
+   =========================== */
+:root {
+  --primary-color: #1e3a8a;
+  --primary-dark: #1a3070;
+  --primary-light: #3b82f6;
+  --accent-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --info-color: #3b82f6;
+  --success-color: #10b981;
+  
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-light: #9ca3af;
+  --bg-light: #f9fafb;
+  --bg-white: #ffffff;
+  --border-color: #e5e7eb;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  <div class="login-container">
-    <h1>Login</h1>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-messages">
-          {% for category, message in messages %}
-            <p class="flash {{ category }}">{{ message }}</p>
-          {% endfor %}
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+}
+
+/* ===========================
+   LOGIN WRAPPER & PANELS
+   =========================== */
+.login-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 1000px;
+  height: auto;
+  min-height: 600px;
+  background: var(--bg-white);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Left Panel - Branding */
+.login-panel-left {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 60px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-panel-left::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(20px); }
+}
+
+.branding-section {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.logo-container {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 30px;
+  backdrop-filter: blur(10px);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.logo-icon {
+  font-size: 50px;
+  color: var(--accent-color);
+}
+
+.system-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.system-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 40px;
+  font-weight: 300;
+}
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.feature-item i {
+  font-size: 18px;
+  color: var(--accent-color);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Right Panel - Login Form */
+.login-panel-right {
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.login-container {
+  width: 100%;
+}
+
+/* ===========================
+   LOGIN HEADER
+   =========================== */
+.login-header {
+  margin-bottom: 40px;
+}
+
+.login-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.login-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* ===========================
+   FLASH MESSAGES
+   =========================== */
+.flash-messages-container {
+  margin-bottom: 30px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  border: none;
+  margin-bottom: 15px;
+  animation: slideDown 0.3s ease-out;
+}
+
+.alert-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid var(--danger-color);
+}
+
+.alert-success {
+  background-color: #dcfce7;
+  color: #15803d;
+  border-left: 4px solid var(--success-color);
+}
+
+.alert-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-left: 4px solid var(--warning-color);
+}
+
+.alert-info {
+  background-color: #dbeafe;
+  color: #0c4a6e;
+  border-left: 4px solid var(--info-color);
+}
+
+.alert i {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: auto;
+  opacity: 0.7;
+  transition: var(--transition);
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
+
+/* ===========================
+   FORM STYLES
+   =========================== */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-label i {
+  font-size: 16px;
+  color: var(--primary-color);
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-primary);
+  transition: var(--transition);
+  background-color: var(--bg-white);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+  background-color: var(--bg-white);
+}
+
+.form-control::placeholder {
+  color: var(--text-light);
+}
+
+.form-control:valid {
+  border-color: var(--accent-color);
+}
+
+.form-control:invalid:not(:placeholder-shown) {
+  border-color: var(--danger-color);
+}
+
+.input-icon {
+  position: absolute;
+  right: 16px;
+  color: var(--text-light);
+  font-size: 16px;
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.form-control:valid ~ .input-icon {
+  color: var(--accent-color);
+}
+
+.form-text {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: -4px;
+}
+
+.password-group {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  transition: var(--transition);
+  padding: 8px;
+}
+
+.toggle-password:hover {
+  color: var(--primary-color);
+}
+
+/* ===========================
+   SUBMIT BUTTON
+   =========================== */
+.btn-submit {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: var(--transition);
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-submit:hover::before {
+  left: 100%;
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+.btn-submit i {
+  font-size: 16px;
+  transition: var(--transition);
+}
+
+.btn-submit:hover i {
+  transform: translateX(4px);
+}
+
+/* ===========================
+   SIGNUP SECTION
+   =========================== */
+.signup-section {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.signup-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.signup-link:hover {
+  color: var(--primary-light);
+  text-decoration: underline;
+}
+
+/* ===========================
+   DIVIDER
+   =========================== */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 25px 0;
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.divider span {
+  padding: 0 15px;
+}
+
+/* ===========================
+   HELP SECTION
+   =========================== */
+.help-section {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.support-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.support-link:hover {
+  color: var(--primary-light);
+  text-decoration: underline;
+}
+
+/* ===========================
+   LOGIN FOOTER
+   =========================== */
+.login-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-light);
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.login-footer p {
+  margin-bottom: 10px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.footer-links a {
+  color: var(--text-light);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.footer-links a:hover {
+  color: var(--text-secondary);
+  text-decoration: underline;
+}
+
+/* ===========================
+   RESPONSIVE DESIGN
+   =========================== */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .login-wrapper {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    margin: 20px;
+    max-width: 100%;
+  }
+
+  .login-panel-left {
+    padding: 40px 30px;
+    min-height: 300px;
+  }
+
+  .logo-container {
+    width: 80px;
+    height: 80px;
+  }
+
+  .logo-icon {
+    font-size: 40px;
+  }
+
+  .system-title {
+    font-size: 26px;
+  }
+
+  .login-header h2 {
+    font-size: 24px;
+  }
+
+  .features-list {
+    gap: 15px;
+  }
+
+  .feature-item {
+    font-size: 13px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+
+  .login-wrapper {
+    margin: 0;
+    border-radius: 15px;
+  }
+
+  .login-panel-left {
+    padding: 30px 20px;
+    min-height: 250px;
+  }
+
+  .login-panel-right {
+    padding: 30px 20px;
+  }
+
+  .logo-container {
+    width: 70px;
+    height: 70px;
+  }
+
+  .logo-icon {
+    font-size: 35px;
+  }
+
+  .system-title {
+    font-size: 22px;
+  }
+
+  .system-subtitle {
+    font-size: 12px;
+  }
+
+  .login-header h2 {
+    font-size: 20px;
+  }
+
+  .login-header p {
+    font-size: 13px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .form-control {
+    padding: 11px 14px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .btn-submit {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .features-list {
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  .feature-item {
+    font-size: 12px;
+  }
+
+  .feature-item i {
+    font-size: 16px;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .login-footer {
+    font-size: 11px;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 320px) {
+  .login-panel-left,
+  .login-panel-right {
+    padding: 20px 15px;
+  }
+
+  .system-title {
+    font-size: 20px;
+  }
+
+  .login-header h2 {
+    font-size: 18px;
+  }
+
+  .form-control {
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+}
+
+/* ===========================
+   ACCESSIBILITY
+   =========================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-primary: #f3f4f6;
+    --text-secondary: #d1d5db;
+    --text-light: #9ca3af;
+    --bg-light: #111827;
+    --bg-white: #1f2937;
+    --border-color: #374151;
+  }
+
+  body {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  }
+
+  .form-control {
+    background-color: #111827;
+    color: var(--text-primary);
+  }
+
+  .form-control:focus {
+    background-color: #111827;
+  }
+}
+  </style>
+  <div class="login-wrapper">
+    <!-- Left Panel - Branding -->
+    <div class="login-panel-left">
+      <div class="branding-section">
+        <div class="logo-container">
+          <i class="fas fa-vote-yea logo-icon"></i>
         </div>
-      {% endif %}
-    {% endwith %}
+        <h1 class="system-title">Voting System</h1>
+        <p class="system-subtitle">Democratic Choice Platform</p>
+        <div class="features-list">
+          <div class="feature-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure & Encrypted</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-lock"></i>
+            <span>Password Protected</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Verified Voting</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <form method="POST" action="/login">
-      <label for="idcard">CNIC Number:</label>
-      <input type="text" id="idcard" name="idcard" placeholder="Enter CNIC" required>
+    <!-- Right Panel - Login Form -->
+    <div class="login-panel-right">
+      <div class="login-container">
+        <!-- Header -->
+        <div class="login-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in with your CNIC and password</p>
+        </div>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" placeholder="Enter Password" required>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages-container">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                  {% if category == 'error' %}
+                    <i class="fas fa-exclamation-circle"></i>
+                  {% elif category == 'success' %}
+                    <i class="fas fa-check-circle"></i>
+                  {% else %}
+                    <i class="fas fa-info-circle"></i>
+                  {% endif %}
+                  <span>{{ message }}</span>
+                  <button type="button" class="btn-close" data-dismiss="alert"></button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
 
-      <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+        <!-- Login Form -->
+        <form method="POST" action="/login" class="login-form" novalidate>
+          <!-- CNIC Input -->
+          <div class="form-group">
+            <label for="idcard" class="form-label">
+              <i class="fas fa-id-card"></i> CNIC Number
+            </label>
+            <div class="input-group">
+              <input 
+                type="text" 
+                id="idcard" 
+                name="idcard" 
+                class="form-control" 
+                placeholder="12345-6789012-3" 
+                pattern="[0-9]{5}-[0-9]{7}-[0-9]{1}" 
+                title="Format: 12345-6789012-3"
+                required>
+              <span class="input-icon">
+                <i class="fas fa-check-circle"></i>
+              </span>
+            </div>
+            <small class="form-text">Format: XXXXX-XXXXXXX-X</small>
+          </div>
+
+          <!-- Password Input -->
+          <div class="form-group">
+            <label for="password" class="form-label">
+              <i class="fas fa-lock"></i> Password
+            </label>
+            <div class="input-group password-group">
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                class="form-control" 
+                placeholder="Enter your password"
+                required>
+              <button type="button" class="toggle-password" id="togglePassword">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn-submit">
+            <span>Sign In</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <!-- Signup Link -->
+        <div class="signup-section">
+          <p>Don't have an account? 
+            <a href="/signup" class="signup-link">Create one now</a>
+          </p>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider">
+          <span>OR</span>
+        </div>
+
+        <!-- Help Section -->
+        <div class="help-section">
+          <p>Need help? <a href="/support" class="support-link">Contact Support</a></p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="login-footer">
+        <p>&copy; 2026 Voting System. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="footer">
-    <p>&copy; 2023 Voting System. All rights reserved.</p>
-  </div>
+  <!-- Scripts -->
+  <script>
+    // Password visibility toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('password');
+
+    if (togglePassword) {
+      togglePassword.addEventListener('click', function() {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        this.innerHTML = type === 'password' 
+          ? '<i class="fas fa-eye"></i>' 
+          : '<i class="fas fa-eye-slash"></i>';
+      });
+    }
+
+    // Form validation
+    const form = document.querySelector('.login-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      });
+    }
+
+    // Alert dismiss
+    const closeButtons = document.querySelectorAll('.btn-close');
+    closeButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.closest('.alert').remove();
+      });
+    });
+  </script>
 </body>
 </html>

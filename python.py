@@ -95,6 +95,21 @@ def insert_candidate_to_db(data):
 def home():
     return render_template('login.html')
 
+# Support
+@app.route('/support')
+def support():
+    return render_template('support.html')
+
+# Privacy
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+# Terms
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
 # LOGIN 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

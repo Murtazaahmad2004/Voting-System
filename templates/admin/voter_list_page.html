@@ -40,54 +40,56 @@
   </form>
 </div>
 
-
   <!-- Records Table -->
-  <table id="voterTable" class="table table-bordered table-hover">
-    <thead>
-      <tr>
-        <th>S. #</th>
-        <th>User Name</th>
-        <th>Gender</th>
-        <th>ID Card Number</th>
-        <th>Email</th>
-        <th>Password</th>
-        <th>Confirm Password</th>
-        <th>Role</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for record in records %}
-      <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ record['user_name'] }}</td>
-        <td>{{ record['gender'] }}</td>
-        <td>{{ record['id_card'] }}</td>
-        <td>{{ record['email'] }}</td>
-        <td>{{ record['password'] }}</td>
-        <td>{{ record['confirm_password'] }}</td>
-        <td>{{ record['role'] }}</td>
-        <td>
-          <div class="action-buttons">
-            <a href="//{{ record['id'] }}" class="icon-button edit" title="Edit">
-              <i class="fas fa-edit"></i>
-            </a>
-            <a href="{{ url_for('delete_voter_record', cnic=record['id_card']) }}" class="icon-button delete" title="Delete" 
-              onclick="return confirm('Are you sure you want to delete this record?');">
-              <i class="fas fa-trash-alt"></i>
-            </a>
-          </div>
-        </td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="9">No records found.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+   <div class="table-wrapper">
+      <table id="voterTable" class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>S. #</th>
+            <th>User Name</th>
+            <th>Gender</th>
+            <th>ID Card Number</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Confirm Password</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ record['user_name'] }}</td>
+            <td>{{ record['gender'] }}</td>
+            <td>{{ record['id_card'] }}</td>
+            <td>{{ record['email'] }}</td>
+            <td>{{ record['password'] }}</td>
+            <td>{{ record['confirm_password'] }}</td>
+            <td>{{ record['role'] }}</td>
+            <td>
+              <div class="action-buttons">
+                <a href="//{{ record['id'] }}" class="icon-button edit" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a href="{{ url_for('delete_voter_record', cnic=record['id_card']) }}" class="icon-button delete" title="Delete" 
+                  onclick="return confirm('Are you sure you want to delete this record?');">
+                  <i class="fas fa-trash-alt"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="9">No records found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+   </div>
+  
     <div class="footer">
-      <p>&copy; 2023 Voting System. All rights reserved.</p>
+      <p>&copy; 2026 Voting System. All rights reserved.</p>
     </div>
 </body>
 </html>

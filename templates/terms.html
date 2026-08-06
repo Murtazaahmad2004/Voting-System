@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Service</title>
+</head>
+<style>
+    :root{
+  --ink:#122024;
+  --ink-soft:#4b5d61;
+  --paper:#f6f4ef;
+  --card:#ffffff;
+  --line:#e2ddd2;
+  --teal:#1f6f66;
+  --teal-deep:#123c37;
+  --amber:#c98a2c;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  font-family:"Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color:var(--ink);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  padding:32px 16px 80px;
+}
+
+/* --- Tab switcher --- */
+.switcher{
+  display:flex;
+  gap:6px;
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:6px;
+  border-radius:999px;
+  margin-bottom:28px;
+  box-shadow:0 1px 2px rgba(18,32,36,0.04);
+}
+.switcher .tab-btn{
+  border:none;
+  background:transparent;
+  padding:9px 16px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:0.2px;
+  color:var(--ink-soft);
+  border-radius:999px;
+  cursor:pointer;
+  text-decoration:none;
+  transition:background .2s ease, color .2s ease;
+  font-family:inherit;
+}
+.switcher .tab-btn.active{
+  background:var(--teal-deep);
+  color:#fdfaf3;
+}
+
+/* --- Page container --- */
+.page{
+  width:100%;
+  max-width:640px;
+  background:var(--card);
+  border-radius:var(--radius, 18px);
+  border:1px solid var(--line);
+  box-shadow:0 20px 50px -25px rgba(18,32,36,0.25);
+  overflow:hidden;
+}
+.screen{
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  padding:36px 32px 24px;
+  background:var(--teal-deep);
+  color:#fdfaf3;
+}
+.topbar .eyebrow{
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  opacity:0.65;
+  margin:0 0 6px;
+}
+.topbar h1{
+  margin:0;
+  font-size:23px;
+  font-weight:700;
+  letter-spacing:-0.3px;
+}
+.topbar p{
+  margin:8px 0 0;
+  font-size:13px;
+  line-height:1.5;
+  opacity:0.8;
+  max-width:300px;
+}
+
+.content{
+  flex:1;
+  padding:26px 32px 36px;
+}
+
+/* ---- Legal doc style ---- */
+.legal-meta{
+  font-size:12px;
+  color:var(--ink-soft);
+  margin-bottom:18px;
+}
+.legal-section{ margin-bottom:22px; }
+.legal-section h2{
+  font-size:14px;
+  margin:0 0 8px;
+  color:var(--teal-deep);
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+}
+.legal-section h2 .num{
+  font-size:11px;
+  color:var(--amber);
+  font-weight:700;
+}
+.legal-section p, .legal-section li{
+  font-size:13px;
+  line-height:1.65;
+  color:var(--ink);
+  margin:0 0 8px;
+}
+.legal-section ul{ margin:0; padding-left:18px; }
+.legal-divider{
+  height:1px;
+  background:var(--line);
+  margin:0 0 22px;
+}
+.accept-bar{
+  padding:16px 20px 26px;
+  border-top:1px solid var(--line);
+  background:var(--card);
+  display:flex;
+  gap:10px;
+}
+.accept-bar button{
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  border:1px solid var(--line);
+  font-family:inherit;
+}
+.accept-bar .decline{ background:var(--card); color:var(--ink-soft); }
+.accept-bar .accept{ background:var(--teal-deep); color:#fdfaf3; border:none; }
+
+::-webkit-scrollbar{ width:6px; }
+::-webkit-scrollbar-thumb{ background:var(--line); border-radius:10px; }
+</style>
+<body>
+
+  <div class="page">
+    <div class="screen active" id="terms">
+      <div class="topbar">
+        <p class="eyebrow">Legal</p>
+        <h1>Terms of Service</h1>
+        <p>The rules for using our app and services.</p>
+      </div>
+      <div class="content">
+        <p class="legal-meta">Effective date: August 1, 2026</p>
+
+        <div class="legal-section">
+          <h2><span class="num">01</span>Acceptance of terms</h2>
+          <p>By creating an account or using this app, you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree, please discontinue use of the app.</p>
+        </div>
+
+        <div class="legal-section">
+          <h2><span class="num">02</span>Using our services</h2>
+          <p>You must be at least 13 years old to use this app. You agree to provide accurate information and to keep your account credentials secure. You are responsible for all activity under your account.</p>
+        </div>
+
+        <div class="legal-section">
+          <h2><span class="num">03</span>Acceptable use</h2>
+          <ul>
+            <li>No unlawful, abusive, or fraudulent activity</li>
+            <li>No attempts to disrupt or reverse-engineer the service</li>
+            <li>No impersonation of another person or entity</li>
+            <li>No uploading of malicious code or harmful content</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h2><span class="num">04</span>Termination</h2>
+          <p>We may suspend or terminate accounts that violate these terms. You may stop using the app and delete your account at any time from Settings.</p>
+        </div>
+
+        <div class="legal-section">
+          <h2><span class="num">05</span>Limitation of liability</h2>
+          <p>The app is provided "as is" without warranties of any kind. To the maximum extent permitted by law, we are not liable for indirect or incidental damages arising from your use of the service.</p>
+        </div>
+
+        <div class="legal-section">
+          <h2><span class="num">06</span>Changes to these terms</h2>
+          <p>We may update these terms from time to time. Continued use of the app after changes take effect constitutes acceptance of the revised terms.</p>
+        </div>
+
+        <div class="legal-divider"></div>
+        <p class="legal-meta">Questions about these terms? Reach us via the Contact Support screen.</p>
+      </div>
+      <div class="accept-bar">
+        <button class="decline">Decline</button>
+        <button class="accept">I Agree</button>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

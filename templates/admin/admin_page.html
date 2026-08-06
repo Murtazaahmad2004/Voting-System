@@ -4,9 +4,180 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Admin DashBoard(Admin)</title>
 </head>
+<style>
+  /* ===========================
+   Dashboard Home
+=========================== */
+
+.dashboard-home{
+    margin-left:250px;
+    padding:40px;
+    min-height:calc(100vh - 120px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.3s;
+}
+
+/* Card */
+
+.welcome-card{
+
+    width:100%;
+    max-width:900px;
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:60px 40px;
+
+    text-align:center;
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.08);
+
+}
+
+/* Icon */
+
+.welcome-icon{
+
+    width:110px;
+    height:110px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    background:linear-gradient(135deg,#283fa7,#3f6dff);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:white;
+
+    font-size:48px;
+
+    margin-bottom:30px;
+
+}
+
+/* Heading */
+
+.welcome-card h1{
+
+    font-size:42px;
+
+    color:#1e293b;
+
+    margin-bottom:15px;
+
+    font-weight:700;
+
+}
+
+/* Paragraph */
+
+.welcome-card p{
+
+    font-size:18px;
+
+    color:#64748b;
+
+    max-width:650px;
+
+    margin:auto;
+
+    line-height:30px;
+
+}
+
+/* Hover */
+
+.welcome-card:hover{
+
+    transform:translateY(-5px);
+
+    transition:.4s;
+
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media(max-width:992px){
+
+.dashboard-home{
+
+margin-left:0;
+
+padding:25px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.welcome-card{
+
+padding:40px 20px;
+
+}
+
+.welcome-icon{
+
+width:80px;
+height:80px;
+font-size:35px;
+
+}
+
+.welcome-card h1{
+
+font-size:30px;
+
+}
+
+.welcome-card p{
+
+font-size:16px;
+
+}
+
+}
+
+@media(max-width:480px){
+
+.welcome-card{
+
+padding:30px 15px;
+
+}
+
+.welcome-card h1{
+
+font-size:24px;
+
+}
+
+.welcome-card p{
+
+font-size:15px;
+
+line-height:24px;
+
+}
+
+}
+</style>
 <body>
     {% include '/admin/admin_sidebar.html' %}
 
@@ -14,13 +185,25 @@
         <h1>Admin Page</h1>
     </div>
 
-  <div class="voter-container">
-    <marquee>
-      <h1>Welcome To Admin Page.</h1>
-    </marquee>
-  </div>
+  <div class="dashboard-home">
+
+    <div class="welcome-card">
+
+        <div class="welcome-icon">
+            <i class="fas fa-user-shield"></i>
+        </div>
+
+        <h1>Welcome, Admin</h1>
+
+        <p>
+            Manage your Online Voting System from one place.
+        </p>
+
+    </div>
+
+</div>
   <div class="footer">
-    <p>&copy; 2023 Voting System. All rights reserved.</p>
+    <p>&copy; 2026 Voting System. All rights reserved.</p>
   </div>
 </body>
 </html>
