@@ -2,7 +2,7 @@ create database voting_system;
 use voting_system;
 
 INSERT INTO signup (user_name, gender, id_card, email, password, confirm_password, role) 
-VALUES ('Murtaza Ahmad', 'male', '3730181884439', 'murtazaahmad2004@gmail.com', '2004', '2004', 'admin');
+VALUES ('murtaza ahmad', 'male', '3730181884439', 'murtazaahmad2004@gmail.com', 'admin@2004', 'admin@2004', 'admin');
 
 -- USERS (signup table)
 CREATE TABLE signup (
