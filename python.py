@@ -808,50 +808,156 @@ def voter_results():
 def votes_chart():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT candidate_name, COUNT(*) AS total_votes
-        FROM votes_full
-        GROUP BY candidate_name
-        ORDER BY total_votes DESC
-    """)
-    rows = cursor.fetchall()
-    labels = [r[0] for r in rows]
-    votes = [int(r[1]) for r in rows]
-    data = {
-        "labels": labels,
-        "datasets": [{
-            "label": "Total Votes",
-            "data": votes
-        }]
-    }
-    cursor.close()
-    conn.close()
-    return jsonify(data)
 
-# Votes per party
+    try:
+        cursor.execute("""
+            SELECT candidate_name, COUNT(*) AS total_votes
+            FROM votes_full
+            WHERE candidate_name IS NOT NULL
+              AND candidate_name != ''
+            GROUP BY candidate_name
+            ORDER BY total_votes DESC
+        """)
+
+        rows = cursor.fetchall()
+
+        labels = [row[0] for row in rows]
+        votes = [int(row[1]) for row in rows]
+
+        return jsonify({
+            "labels": labels,
+            "votes": votes
+        })
+
+    except Exception as e:
+        print("Votes chart error:", e)
+
+        return jsonify({
+            "labels": [],
+            "votes": [],
+            "error": str(e)
+        }), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Votes per parties
 @app.route("/chart/parties")
 def parties_chart():
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT party_name, COUNT(*) AS total_votes
+            FROM votes_full
+            WHERE party_name IS NOT NULL
+              AND party_name != ''
+            GROUP BY party_name
+            ORDER BY total_votes DESC
+        """)
+
+        rows = cursor.fetchall()
+
+        labels = [row[0] for row in rows]
+        votes = [int(row[1]) for row in rows]
+
+        return jsonify({
+            "labels": labels,
+            "votes": votes
+        })
+
+    except Exception as e:
+        print("Party chart error:", e)
+
+        return jsonify({
+            "labels": [],
+            "votes": [],
+            "error": str(e)
+        }), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Candidates Total
+@app.route("/dashboard-stats")
+def dashboard_stats():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Total Candidates
+    cursor.execute("""
+        SELECT COUNT(*) 
+        FROM candidate
+    """)
+    total_candidates = cursor.fetchone()[0]
+
+    # Total Voters
+    cursor.execute("""
+        SELECT COUNT(*) 
+        FROM voting_registration
+    """)
+    total_voters = cursor.fetchone()[0]
+
+    # Total Votes Cast
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM votes_full
+    """)
+    votes_cast = cursor.fetchone()[0]
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({
+        "total_candidates": total_candidates,
+        "total_voters": total_voters,
+        "votes_cast": votes_cast
+    })
+
+# Winner Party
+@app.route("/winner-party")
+def winner_party():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
     cursor.execute("""
         SELECT party_name, COUNT(*) AS total_votes
         FROM votes_full
+        WHERE party_name IS NOT NULL
+          AND party_name != ''
         GROUP BY party_name
         ORDER BY total_votes DESC
     """)
+
     rows = cursor.fetchall()
-    labels = [r[0] for r in rows]
-    votes = [int(r[1]) for r in rows]
-    data = {
-        "labels": labels,
-        "datasets": [{
-            "label": "Votes by Party",
-            "data": votes
-        }]
-    }
+
     cursor.close()
     conn.close()
-    return jsonify(data)
+
+    # Agar votes table empty hai
+    if not rows:
+        return jsonify({
+            "winner_parties": [],
+            "total_votes": 0
+        })
+
+    # Highest votes
+    max_votes = int(rows[0][1])
+
+    # Jitni parties ke votes highest ke equal hain
+    winner_parties = [
+        row[0]
+        for row in rows
+        if int(row[1]) == max_votes
+    ]
+
+    return jsonify({
+        "winner_parties": winner_parties,
+        "total_votes": max_votes
+    })
 
 # DashBoard Route
 @app.route("/admin/dashboard")

@@ -1,68 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+      <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <title>Elections(Admin)</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<style>
+  :root{
+    --ink:#122024;
+    --ink-soft:#4b5d61;
+    --paper:#f6f4ef;
+    --card:#ffffff;
+    --line:#e2ddd2;
+    --teal:#1f6f66;
+    --teal-deep:#123c37;
+    --amber:#c98a2c;
+    --sidebar-w:220px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+
+  body.has-sidebar{
+    margin-left:var(--sidebar-w);
+    padding-top:68px;
+    padding-bottom:52px;
+  }
+
+  /* ---- Top navbar ---- */
+  .navbar{
+    position:fixed;
+    top:0;
+    left:var(--sidebar-w);
+    right:0;
+    z-index:50;
+    background:var(--teal-deep);
+    color:#fdfaf3;
+    padding:20px 32px;
+    box-shadow:0 2px 10px rgba(18,32,36,0.15);
+  }
+  .navbar h1{
+    margin:0;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:-0.2px;
+  }
+
+  /* ---- Page content ---- */
+  .page-content{
+    padding:32px 32px 8px;
+  }
+
+  .section-title{
+    font-size:20px;
+    font-weight:700;
+    color:var(--ink);
+    margin:0 0 22px;
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .section-title i{
+    color:var(--amber);
+    font-size:17px;
+  }
+
+  /* ---- Flash messages ---- */
+  .alert{
+    padding:12px 16px;
+    border-radius:12px;
+    font-size:13.5px;
+    margin:0 0 18px;
+    border:1px solid transparent;
+  }
+  .alert-success{
+    background:#e6f3ee;
+    color:#0f5132;
+    border-color:#bfe3d3;
+  }
+  .alert-danger, .alert-error{
+    background:#fbeaea;
+    color:#7a2020;
+    border-color:#f3caca;
+  }
+  .alert-warning{
+    background:#fbf1de;
+    color:#7a5a12;
+    border-color:#f0dcae;
+  }
+  .alert-info{
+    background:#e8f2ef;
+    color:var(--teal-deep);
+    border-color:#cfe6df;
+  }
+
+  /* ---- Create election button ---- */
+  .btn-primary{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--teal-deep);
+    color:#fdfaf3;
+    border:none;
+    padding:11px 20px;
+    border-radius:10px;
+    font-size:13.5px;
+    font-weight:700;
+    text-decoration:none;
+    margin:0 0 24px;
+    transition:background .15s ease;
+  }
+  .btn-primary:hover{
+    background:var(--teal);
+    color:#fdfaf3;
+  }
+
+  /* ---- Table card wrapper ---- */
+  .table-wrapper{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:0 14px 30px -22px rgba(18,32,36,0.2);
+    overflow-x:auto;
+    margin:0 0 32px;
+  }
+
+  table.elections-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+    min-width:680px;
+  }
+
+  table.elections-table thead th{
+    background:var(--teal-deep);
+    color:#fdfaf3;
+    text-align:left;
+    padding:13px 16px;
+    font-size:11.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    white-space:nowrap;
+  }
+  table.elections-table thead th:first-child{ border-top-left-radius:16px; }
+  table.elections-table thead th:last-child{ border-top-right-radius:16px; }
+
+  table.elections-table tbody td{
+    padding:12px 16px;
+    border-bottom:1px solid var(--line);
+    color:var(--ink);
+    vertical-align:middle;
+  }
+  table.elections-table tbody tr:last-child td{
+    border-bottom:none;
+  }
+  table.elections-table tbody tr:hover{
+    background:#f7f6f1;
+  }
+  table.elections-table tbody tr td:first-child{
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+
+  /* ---- Status labels ---- */
+  .label{
+    display:inline-block;
+    padding:5px 12px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+  }
+  .label-success{
+    background:#e6f3ee;
+    color:#0f5132;
+  }
+  .label-danger{
+    background:#fbeaea;
+    color:#a13131;
+  }
+
+  /* ---- Manage button ---- */
+  .btn-warning{
+    display:inline-block;
+    background:var(--amber);
+    color:#241705;
+    border:none;
+    padding:8px 14px;
+    border-radius:9px;
+    font-size:12px;
+    font-weight:700;
+    text-decoration:none;
+    transition:filter .15s ease;
+    white-space:nowrap;
+  }
+  .btn-warning:hover{
+    filter:brightness(0.93);
+    color:#241705;
+  }
+
+  table.elections-table tbody td[colspan]{
+    text-align:center;
+    color:var(--ink-soft);
+    padding:28px 16px;
+    font-style:italic;
+  }
+
+  /* ---- Footer ---- */
+  .footer{
+    position:fixed;
+    bottom:0;
+    left:var(--sidebar-w);
+    right:0;
+    z-index:50;
+    padding:14px 24px;
+    text-align:center;
+    border-top:1px solid var(--line);
+    background:var(--card);
+  }
+  .footer p{
+    margin:0;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px){
+    body.has-sidebar{
+      margin-left:0;
+    }
+    .navbar, .footer{
+      left:0;
+    }
+    .navbar h1{
+      text-align:center;
+    }
+    .page-content{
+      padding:24px 18px 8px;
+    }
+  }
+</style>
+<body class="has-sidebar">
     {% include '/admin/admin_sidebar.html' %}
 
     <div class="navbar">
         <h1>Elections Page</h1>
     </div>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-            {{ message }}
-            </div>
-        {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
-    <div class="container">
-        <h2 class="text-center">🗳️ Elections Management</h2>
-        <a href="{{ url_for('create_election') }}" class="btn btn-primary">➕ Create New Election</a>
-        <br><br>
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Status</th>
-                    <th>Manage</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for election in elections %}
-                <tr>
-                    <td>{{ election.id }}</td>
-                    <td>{{ election.title }}</td>
-                    <td>{{ election.start_date }}</td>
-                    <td>{{ election.end_date }}</td>
-                    <td>
-                        {% if election.is_active %}
-                            <span class="label label-success">Active</span>
-                        {% else %}
-                            <span class="label label-danger">Inactive</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{{ url_for('toggle_election', election_id=election.id) }}" class="btn btn-warning btn-sm">
-                            {% if election.is_active %}Deactivate{% else %}Activate{% endif %}
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="page-content">
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                {{ message }}
+                </div>
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h2 class="section-title"><i class="fas fa-square-poll-vertical"></i> Elections Management</h2>
+
+        <a href="{{ url_for('create_election') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Create New Election
+        </a>
+
+        <div class="table-wrapper">
+            <table class="elections-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Status</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for election in elections %}
+                    <tr>
+                        <td>{{ election.id }}</td>
+                        <td>{{ election.title }}</td>
+                        <td>{{ election.start_date }}</td>
+                        <td>{{ election.end_date }}</td>
+                        <td>
+                            {% if election.is_active %}
+                                <span class="label label-success">Active</span>
+                            {% else %}
+                                <span class="label label-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('toggle_election', election_id=election.id) }}" class="btn btn-warning btn-sm">
+                                {% if election.is_active %}Deactivate{% else %}Activate{% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No elections found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
     </div>
+
     <div class="footer">
         <p>&copy; 2026 Voting System. All rights reserved.</p>
     </div>

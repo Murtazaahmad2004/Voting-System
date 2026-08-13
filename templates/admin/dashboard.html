@@ -1,380 +1,504 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="{{ url_for('static', filename='script/main.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <title>Voting Dashboard</title>
-</head>
-<style>
-:root{
-  --ink:#122024;
-  --ink-soft:#4b5d61;
-  --paper:#f6f4ef;
-  --card:#ffffff;
-  --line:#e2ddd2;
-  --teal:#1f6f66;
-  --teal-deep:#123c37;
-  --amber:#c98a2c;
-  --sidebar-w:220px;
-}
+  </head>
+  <style>
+    :root {
+      --ink: #122024;
+      --ink-soft: #4b5d61;
+      --paper: #f6f4ef;
+      --card: #ffffff;
+      --line: #e2ddd2;
+      --teal: #1f6f66;
+      --teal-deep: #123c37;
+      --amber: #c98a2c;
+      --sidebar-w: 220px;
+    }
 
-*{ box-sizing:border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-html, body{
-  margin:0;
-  padding:0;
-  background:var(--paper);
-  color:var(--ink);
-  font-family:"Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
-}
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family:
+        "Segoe UI",
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        sans-serif;
+    }
 
-body.has-sidebar{
-  margin-left:var(--sidebar-w);
-  padding-top:68px;
-  padding-bottom:52px;
-}
+    body.has-sidebar {
+      margin-left: var(--sidebar-w);
+      padding-top: 68px;
+      padding-bottom: 52px;
+    }
 
-/* ---- Top navbar ---- */
-.navbar{
-  position:fixed;
-  top:0;
-  left:var(--sidebar-w);
-  right:0;
-  z-index:50;
-  background:var(--teal-deep);
-  color:#fdfaf3;
-  padding:20px 32px;
-  box-shadow:0 2px 10px rgba(18,32,36,0.15);
-}
-.navbar h1{
-  margin:0;
-  font-size:20px;
-  font-weight:700;
-  letter-spacing:-0.2px;
-}
+    /* ---- Top navbar ---- */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: var(--sidebar-w);
+      right: 0;
+      z-index: 50;
+      background: var(--teal-deep);
+      color: #fdfaf3;
+      padding: 20px 32px;
+      box-shadow: 0 2px 10px rgba(18, 32, 36, 0.15);
+    }
+    .navbar h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
 
-/* ---- Page content wrapper ---- */
-.page-content{
-  padding:32px 32px 8px;
-}
+    /* ---- Page content wrapper ---- */
+    .page-content {
+      padding: 32px 32px 8px;
+    }
 
-.section-title{
-  font-size:20px;
-  font-weight:700;
-  color:var(--ink);
-  margin:0 0 22px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.section-title i{
-  color:var(--amber);
-  font-size:17px;
-}
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title i {
+      color: var(--amber);
+      font-size: 17px;
+    }
 
-/* ---- Stat cards row ---- */
-.dashboard-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:18px;
-  margin:0 0 30px;
-}
-.dashboard-row .col-lg-3,
-.dashboard-row .col-md-4,
-.dashboard-row .col-sm-6{
-  flex:1 1 240px;
-  max-width:280px;
-  padding:0;
-}
+    /* ---- Stat cards row ---- */
+    .dashboard-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin: 0 0 30px;
+    }
+    .dashboard-row .col-lg-3,
+    .dashboard-row .col-md-4,
+    .dashboard-row .col-sm-6 {
+      flex: 1 1 240px;
+      max-width: 280px;
+      padding: 0;
+    }
 
-.card.card-color{
-  background:var(--teal-deep);
-  color:#fdfaf3;
-  border:none;
-  border-radius:16px;
-  box-shadow:0 14px 30px -18px rgba(18,32,36,0.4);
-  overflow:hidden;
-}
-.card.card-color.card-amber{
-  background:var(--amber);
-  color:#241705;
-}
+    .card.card-color {
+      background: var(--teal-deep);
+      color: #fdfaf3;
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 14px 30px -18px rgba(18, 32, 36, 0.4);
+      overflow: hidden;
+    }
+    .card.card-color.card-amber {
+      background: var(--amber);
+      color: #241705;
+    }
 
-.card-body{
-  padding:22px;
-}
+    .card-body {
+      padding: 22px;
+    }
 
-.card-title{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  margin-bottom:10px;
-}
-.card-title i{
-  opacity:0.85;
-  font-size:22px !important;
-}
-.card-title h6{
-  margin:0;
-  font-size:12.5px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:0.4px;
-  opacity:0.85;
-}
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .card-title i {
+      opacity: 0.85;
+      font-size: 22px !important;
+    }
+    .card-title h6 {
+      margin: 0;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      opacity: 0.85;
+    }
 
-.card-body p{
-  margin:0;
-  font-size:28px;
-  font-weight:700;
-  letter-spacing:-0.3px;
-}
+    .card-body p {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
 
-/* ---- Chart cards ---- */
-.main-content{
-  padding:0 0 24px;
-}
-.main-content .row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:18px;
-}
-.main-content .col-md-6{
-  flex:1 1 380px;
-  padding:0;
-}
+    /* ---- Chart cards ---- */
+    .main-content {
+      padding: 0 0 24px;
+    }
+    .main-content .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+    .main-content .col-md-6 {
+      flex: 1 1 380px;
+      padding: 0;
+    }
 
-.dashboard-card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:16px;
-  box-shadow:0 14px 30px -20px rgba(18,32,36,0.2);
-  padding:22px;
-  height:100%;
-}
-.dashboard-card h3{
-  margin:0 0 16px;
-  font-size:15px;
-  font-weight:700;
-  color:var(--ink);
-}
-.dashboard-card canvas{
-  max-height:280px;
-}
+    .dashboard-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 14px 30px -20px rgba(18, 32, 36, 0.2);
+      padding: 22px;
+      height: 100%;
+    }
+    .dashboard-card h3 {
+      margin: 0 0 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .dashboard-card canvas {
+      max-height: 280px;
+    }
 
-/* ---- Footer ---- */
-.footer{
-  position:fixed;
-  bottom:0;
-  left:var(--sidebar-w);
-  right:0;
-  z-index:50;
-  margin-top:0;
-  padding:14px 24px;
-  text-align:center;
-  border-top:1px solid var(--line);
-  background:var(--card);
-}
-.footer p{
-  margin:0;
-  font-size:12px;
-  color:var(--ink-soft);
-}
+    /* ---- Footer ---- */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: var(--sidebar-w);
+      right: 0;
+      z-index: 50;
+      margin-top: 0;
+      padding: 14px 24px;
+      text-align: center;
+      border-top: 1px solid var(--line);
+      background: var(--card);
+    }
+    .footer p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
 
-/* ---- Responsive ---- */
-@media (max-width: 768px){
-  body.has-sidebar{
-    margin-left:0;
-  }
-  .navbar,
-  .footer{
-    left:0;
-  }
-  .page-content{
-    padding:24px 18px 8px;
-  }
-  .dashboard-row .col-lg-3,
-  .dashboard-row .col-md-4,
-  .dashboard-row .col-sm-6{
-    max-width:100%;
-  }
-}
-</style>
-<body class="has-sidebar">
-
+    /* ---- Responsive ---- */
+    @media (max-width: 768px) {
+      body.has-sidebar {
+        margin-left: 0;
+      }
+      .navbar,
+      .footer {
+        left: 0;
+      }
+      .navbar h1 {
+        text-align: center;
+      }
+      .page-content {
+        padding: 24px 18px 8px;
+      }
+      .dashboard-row .col-lg-3,
+      .dashboard-row .col-md-4,
+      .dashboard-row .col-sm-6 {
+        max-width: 100%;
+      }
+    }
+  </style>
+  <body class="has-sidebar">
     {% include '/admin/admin_sidebar.html' %}
 
     <div class="navbar">
-        <h1>Admin Dashboard</h1>
+      <h1>Admin Dashboard</h1>
     </div>
 
     <div class="page-content">
+      <h1 class="section-title"><i class="fas fa-poll"></i> Voting Results</h1>
 
-        <h1 class="section-title"><i class="fas fa-poll"></i> Voting Results</h1>
-
-        <div class="container-fluid">
-            <div class="dashboard-row">
-
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card card-color">
-                        <div class="card-body">
-                            <div class="card-title">
-                                <i class="fas fa-vote-yea fa-3x"></i>
-                                <h6>Total Votes Cast</h6>
-                            </div>
-                            <p>1,234</p>
-                        </div>
-                    </div>
+      <div class="container-fluid">
+        <div class="dashboard-row">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="card card-color">
+              <div class="card-body">
+                <div class="card-title">
+                  <i class="fas fa-vote-yea fa-3x"></i>
+                  <h6>Total Votes Cast</h6>
                 </div>
-
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card card-color card-amber">
-                        <div class="card-body">
-                            <div class="card-title">
-                                <i class="fas fa-flag fa-3x"></i>
-                                <h6>Name of Winner Party</h6>
-                            </div>
-                            <p>TLP</p>
-                        </div>
-                    </div>
-                </div>
-
+                <p id="votesCast">0</p>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <div class="main-content container-fluid">
-
-            <div class="row">
-
-                <div class="col-md-6">
-                    <div class="dashboard-card">
-                        <h3>Votes per Candidate</h3>
-                        <canvas id="votesChart"></canvas>
-                    </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="card card-color card-amber">
+              <div class="card-body">
+                <div class="card-title">
+                  <i class="fas fa-flag fa-3x"></i>
+                  <h6 id="winnerParty">Loading...</h6>
                 </div>
-
-                <div class="col-md-6">
-                    <div class="dashboard-card">
-                        <h3>Votes per Party</h3>
-                        <canvas id="partyChart"></canvas>
-                    </div>
-                </div>
-
+                <p id="winnerVotes">0 votes</p>
+              </div>
             </div>
-
+          </div>
         </div>
+      </div>
 
-        <div class="main-content container-fluid">
-
-            <div class="row">
-
-                <div class="col-md-6">
-                    <div class="dashboard-card">
-                        <h3>Votes per Candidate</h3>
-                        <canvas id="votesChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="dashboard-card">
-                        <h3>Votes per Party</h3>
-                        <canvas id="partyChart"></canvas>
-                    </div>
-                </div>
-
+      <div class="main-content container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="dashboard-card">
+              <h3>Votes per Candidate</h3>
+              <canvas id="votesChart"></canvas>
             </div>
+          </div>
 
-        </div>
-
-        <div class="main-content container-fluid">
-
-            <div class="row">
-
-                <div class="col-md-6">
-                    <div class="dashboard-card">
-                        <h3>Votes per Candidate</h3>
-                        <canvas id="votesChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="dashboard-card">
-                        <h3>Votes per Party</h3>
-                        <canvas id="partyChart"></canvas>
-                    </div>
-                </div>
-
+          <div class="col-md-6">
+            <div class="dashboard-card">
+              <h3>Votes per Party</h3>
+              <canvas id="partyChart"></canvas>
             </div>
-
+          </div>
         </div>
+      </div>
     </div>
 
     <div class="footer">
-        <p>&copy; 2026 Voting System. All rights reserved.</p>
+      <p>&copy; 2026 Voting System. All rights reserved.</p>
     </div>
 
     <script>
-        const tealDeep = '#123c37';
-        const teal = '#1f6f66';
-        const amber = '#c98a2c';
-        const inkSoft = '#4b5d61';
-        const line = '#e2ddd2';
+      fetch("/dashboard-stats")
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("votesCast").textContent = data.votes_cast;
+        });
 
-        fetch('/chart/votes')
-            .then(response => response.json())
-            .then(data => {
-                
-            })
+      fetch("/winner-party")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Winner Data:", data);
 
-        const votesCtx = document.getElementById('votesChart');
-        if (votesCtx) {
-            new Chart(votesCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Candidate A', 'Candidate B', 'Candidate C', 'Candidate D'],
-                    datasets: [{
-                        label: 'Votes',
-                        data: [420, 310, 275, 229],
-                        backgroundColor: teal,
-                        borderRadius: 6,
-                        maxBarThickness: 40
-                    }]
+          if (data.winner_parties.length > 0) {
+            document.getElementById("winnerParty").textContent =
+              data.winner_parties.join(" & ");
+
+            document.getElementById("winnerVotes").textContent =
+              data.total_votes + " votes";
+          } else {
+            document.getElementById("winnerParty").textContent = "No Winner";
+
+            document.getElementById("winnerVotes").textContent = "0 votes";
+          }
+        })
+        .catch((error) => {
+          console.error("Winner party error:", error);
+        });
+
+      const tealDeep = "#123c37";
+      const teal = "#1f6f66";
+      const amber = "#c98a2c";
+      const inkSoft = "#4b5d61";
+      const line = "#e2ddd9";
+
+      /*
+       * Different colors
+       */
+      const chartColors = [
+        "#123c37",
+        "#1f6f66",
+        "#c98a2c",
+        "#8fb8b1",
+        "#d8c9a3",
+        "#6b8f8a",
+        "#b58a52",
+        "#496d68",
+        "#c7b78f",
+        "#789f99",
+        "#8a6d5a",
+        "#5c7c89",
+        "#9b7b4f",
+        "#657d6f",
+        "#a68b5b",
+      ];
+
+      /* =========================================
+     CANDIDATE VOTES BAR CHART
+  ========================================= */
+
+      fetch("/chart/votes")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch candidate votes");
+          }
+
+          return response.json();
+        })
+
+        .then((data) => {
+          console.log("Candidate Votes:", data);
+
+          const votesCtx = document.getElementById("votesChart");
+
+          if (!votesCtx) {
+            console.error("votesChart canvas not found");
+            return;
+          }
+
+          /*
+           * Har candidate ke bar ka different color
+           */
+          const barColors = data.labels.map(
+            (label, index) => chartColors[index % chartColors.length],
+          );
+
+          new Chart(votesCtx, {
+            type: "bar",
+
+            data: {
+              labels: data.labels,
+
+              datasets: [
+                {
+                  label: "Votes",
+
+                  data: data.votes,
+
+                  backgroundColor: barColors,
+
+                  borderRadius: 6,
+
+                  maxBarThickness: 40,
                 },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: inkSoft } },
-                        y: { grid: { color: line }, ticks: { color: inkSoft } }
-                    }
-                }
-            });
-        }
+              ],
+            },
 
-        const partyCtx = document.getElementById('partyChart');
-        if (partyCtx) {
-            new Chart(partyCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['TLP', 'PTI', 'PMLN', 'PPP', 'Others'],
-                    datasets: [{
-                        data: [420, 310, 275, 150, 79],
-                        backgroundColor: [tealDeep, teal, amber, '#8fb8b1', '#d8c9a3'],
-                        borderWidth: 0
-                    }]
+            options: {
+              responsive: true,
+
+              maintainAspectRatio: false,
+
+              plugins: {
+                legend: {
+                  display: false,
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: inkSoft, boxWidth: 12, padding: 14 } }
-                    }
-                }
-            });
-        }
+              },
+
+              scales: {
+                x: {
+                  grid: {
+                    display: false,
+                  },
+
+                  ticks: {
+                    color: inkSoft,
+                  },
+                },
+
+                y: {
+                  grid: {
+                    color: line,
+                  },
+
+                  ticks: {
+                    color: inkSoft,
+                  },
+                },
+              },
+            },
+          });
+        })
+
+        .catch((error) => {
+          console.error("Error loading candidate votes:", error);
+        });
+
+      /* =========================================
+     PARTY VOTES DOUGHNUT CHART
+  ========================================= */
+
+      fetch("/chart/parties")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch party votes");
+          }
+
+          return response.json();
+        })
+
+        .then((data) => {
+          console.log("Party Votes:", data);
+
+          const partyCtx = document.getElementById("partyChart");
+
+          if (!partyCtx) {
+            console.error("partyChart canvas not found");
+            return;
+          }
+
+          /*
+           * Har party ke doughnut piece ka
+           * different color
+           */
+          const partyColors = data.labels.map(
+            (label, index) => chartColors[index % chartColors.length],
+          );
+
+          new Chart(partyCtx, {
+            type: "doughnut",
+
+            data: {
+              labels: data.labels,
+
+              datasets: [
+                {
+                  label: "Votes",
+
+                  data: data.votes,
+
+                  backgroundColor: partyColors,
+
+                  borderWidth: 2,
+
+                  borderColor: "#ffffff",
+                },
+              ],
+            },
+
+            options: {
+              responsive: true,
+
+              maintainAspectRatio: false,
+
+              plugins: {
+                legend: {
+                  position: "bottom",
+
+                  labels: {
+                    color: inkSoft,
+
+                    boxWidth: 12,
+
+                    padding: 14,
+                  },
+                },
+              },
+            },
+          });
+        })
+
+        .catch((error) => {
+          console.error("Error loading party votes:", error);
+        });
     </script>
-
-</body>
+  </body>
 </html>

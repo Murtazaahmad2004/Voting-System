@@ -7,87 +7,379 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <script src="{{ url_for('static', filename='script/main.js') }}" defer></script>
   <title>Candidates Data(Admin)</title>
 </head>
-<body>
+<style>
+  :root{
+    --ink:#122024;
+    --ink-soft:#4b5d61;
+    --paper:#f6f4ef;
+    --card:#ffffff;
+    --line:#e2ddd2;
+    --teal:#1f6f66;
+    --teal-deep:#123c37;
+    --amber:#c98a2c;
+    --sidebar-w:220px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+
+  body.has-sidebar{
+    margin-left:var(--sidebar-w);
+    padding-top:68px;
+    padding-bottom:52px;
+  }
+
+  /* ---- Top navbar ---- */
+  .navbar{
+    position:fixed;
+    top:0;
+    left:var(--sidebar-w);
+    right:0;
+    z-index:50;
+    background:var(--teal-deep);
+    color:#fdfaf3;
+    padding:20px 32px;
+    box-shadow:0 2px 10px rgba(18,32,36,0.15);
+  }
+  .navbar h1{
+    margin:0;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:-0.2px;
+  }
+
+  /* ---- Page content ---- */
+  .page-content{
+    padding:32px 32px 8px;
+  }
+
+  .page-content h2{
+    font-size:19px;
+    font-weight:700;
+    color:var(--ink);
+    margin:0 0 20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .page-content h2::before{
+    content:"\f0c0";
+    font-family:"Font Awesome 6 Free";
+    font-weight:900;
+    color:var(--amber);
+    font-size:16px;
+  }
+
+  /* ---- Flash messages ---- */
+  .alert{
+    padding:12px 16px;
+    border-radius:12px;
+    font-size:13.5px;
+    margin:0 0 18px;
+    border:1px solid transparent;
+  }
+  .alert-success{
+    background:#e6f3ee;
+    color:#0f5132;
+    border-color:#bfe3d3;
+  }
+  .alert-danger, .alert-error{
+    background:#fbeaea;
+    color:#7a2020;
+    border-color:#f3caca;
+  }
+  .alert-warning{
+    background:#fbf1de;
+    color:#7a5a12;
+    border-color:#f0dcae;
+  }
+  .alert-info{
+    background:#e8f2ef;
+    color:var(--teal-deep);
+    border-color:#cfe6df;
+  }
+
+  /* ---- Filter card ---- */
+  .id_card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:0 14px 30px -22px rgba(18,32,36,0.25);
+    padding:20px 22px;
+    margin:0 0 26px;
+    max-width:420px;
+  }
+  .id_card form{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .id_card label{
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--ink-soft);
+  }
+  .id_card .form-control{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 13px;
+    font-size:13.5px;
+    font-family:inherit;
+    color:var(--ink);
+    background:#fdfcfa;
+  }
+  .id_card .form-control:focus{
+    outline:2px solid var(--teal);
+    outline-offset:1px;
+  }
+  .id_card .btn-primary{
+    background:var(--teal-deep);
+    color:#fdfaf3;
+    border:none;
+    padding:10px 18px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    align-self:flex-start;
+    margin-top:2px !important;
+    transition:background .15s ease;
+  }
+  .id_card .btn-primary:hover{
+    background:var(--teal);
+  }
+
+  /* ---- Table card wrapper ---- */
+  .table-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:0 14px 30px -22px rgba(18,32,36,0.2);
+    overflow-x:auto;
+    margin:0 0 32px;
+  }
+
+  table#voterTable{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+    min-width:820px;
+  }
+
+  table#voterTable thead th{
+    background:var(--teal-deep);
+    color:#fdfaf3;
+    text-align:left;
+    padding:13px 16px;
+    font-size:11.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    white-space:nowrap;
+  }
+  table#voterTable thead th:first-child{ border-top-left-radius:16px; }
+  table#voterTable thead th:last-child{ border-top-right-radius:16px; }
+
+  table#voterTable tbody td{
+    padding:12px 16px;
+    border-bottom:1px solid var(--line);
+    color:var(--ink);
+    vertical-align:middle;
+  }
+  table#voterTable tbody tr:last-child td{
+    border-bottom:none;
+  }
+  table#voterTable tbody tr:hover{
+    background:#f7f6f1;
+  }
+  table#voterTable tbody tr td:first-child{
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+
+  .party-logo,
+  .profile-pic{
+    width:38px;
+    height:38px;
+    object-fit:cover;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:#fff;
+  }
+
+  .action-buttons{
+    display:flex;
+    gap:8px;
+  }
+  .icon-button{
+    width:32px;
+    height:32px;
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-size:13px;
+    transition:background .15s ease, color .15s ease;
+  }
+  .icon-button.edit{
+    background:#e8f2ef;
+    color:var(--teal-deep);
+  }
+  .icon-button.edit:hover{
+    background:var(--teal-deep);
+    color:#fdfaf3;
+  }
+  .icon-button.delete{
+    background:#fbeaea;
+    color:#a13131;
+  }
+  .icon-button.delete:hover{
+    background:#a13131;
+    color:#fff;
+  }
+
+  table#voterTable tbody td[colspan]{
+    text-align:center;
+    color:var(--ink-soft);
+    padding:28px 16px;
+    font-style:italic;
+  }
+
+  /* ---- Footer ---- */
+  .footer{
+    position:fixed;
+    bottom:0;
+    left:var(--sidebar-w);
+    right:0;
+    z-index:50;
+    padding:14px 24px;
+    text-align:center;
+    border-top:1px solid var(--line);
+    background:var(--card);
+  }
+  .footer p{
+    margin:0;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px){
+    body.has-sidebar{
+      margin-left:0;
+    }
+    .navbar, .footer{
+      left:0;
+    }
+    .navbar h1 {
+      text-align: center;
+    }
+    .page-content{
+      padding:24px 18px 8px;
+    }
+    .id_card{
+      max-width:100%;
+    }
+  }
+</style>
+<body class="has-sidebar">
     {% include '/admin/admin_sidebar.html' %}
 
     <div class="navbar">
       <h1>List Page</h1>
     </div>
-  <!-- Flash Messages -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
-          {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
 
-  <h2>Candidates Records</h2>
+    <div class="page-content">
 
-  <!-- Filter Form -->
-<div class="id_card">
-  <form method="GET" action="/voter_list_page">
-    <label for="id_card">Filter by CNIC:</label>
-    <input type="text" id="id_card" name="id_card" class="form-control" placeholder="Enter CNIC" required>
-    <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
-  </form>
-</div>
-  <!-- Records Table -->
-  <table id="voterTable" class="table table-bordered table-hover">
-    <thead>
-      <tr>
-        <th>S. #</th>
-        <th>Candidate Name</th>
-        <th>Gender</th>
-        <th>ID Card Number</th>
-        <th>Email</th>
-        <th>party_name</th>
-        <th>party_logo</th>
-        <th>profile_pic</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for record in records %}
-      <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ record['candidate_name'] }}</td>
-        <td>{{ record['gender'] }}</td>
-        <td>{{ record['id_card'] }}</td>
-        <td>{{ record['email'] }}</td>
-        <td>{{ record['party_name'] }}</td>
-        <td>
-            <img src="{{ url_for('static', filename='images/' ~ record['party_logo']) }}" class="party-logo">
-        </td>
-        <td>
-            <img src="{{ url_for('static', filename='images/' ~ record['profile_pic']) }}" class="profile-pic">
-        </td>
-        <td>
-          <div class="action-buttons">
-            <a href="//{{ record['id'] }}" class="icon-button edit" title="Edit">
-              <i class="fas fa-edit"></i>
-            </a>
-            <a href="{{ url_for('delete_candidate_record', cnic=record['id_card']) }}" class="icon-button delete" title="Delete" 
-              onclick="return confirm('Are you sure you want to delete this record?');">
-              <i class="fas fa-trash-alt"></i>
-            </a>
-          </div>
-        </td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="9">No records found.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <h2>Candidates Records</h2>
+
+      <!-- Filter Form -->
+      <div class="id_card">
+        <form method="GET" action="/voter_list_page">
+          <label for="id_card">Filter by CNIC</label>
+          <input type="text" id="id_card" name="id_card" class="form-control" placeholder="Enter CNIC" required>
+          <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
+        </form>
+      </div>
+
+      <!-- Records Table -->
+      <div class="table-card">
+        <table id="voterTable" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>S. #</th>
+              <th>Candidate Name</th>
+              <th>Gender</th>
+              <th>ID Card Number</th>
+              <th>Email</th>
+              <th>Party Name</th>
+              <th>Party Logo</th>
+              <th>Profile Pic</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in records %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ record['candidate_name'] }}</td>
+              <td>{{ record['gender'] }}</td>
+              <td>{{ record['id_card'] }}</td>
+              <td>{{ record['email'] }}</td>
+              <td>{{ record['party_name'] }}</td>
+              <td>
+                  <img src="{{ url_for('static', filename='images/' ~ record['party_logo']) }}" class="party-logo">
+              </td>
+              <td>
+                  <img src="{{ url_for('static', filename='images/' ~ record['profile_pic']) }}" class="profile-pic">
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <a href="//{{ record['id'] }}" class="icon-button edit" title="Edit">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a href="{{ url_for('delete_candidate_record', cnic=record['id_card']) }}" class="icon-button delete" title="Delete"
+                    onclick="return confirm('Are you sure you want to delete this record?');">
+                    <i class="fas fa-trash-alt"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="9">No records found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
     <div class="footer">
       <p>&copy; 2026 Voting System. All rights reserved.</p>
     </div>
