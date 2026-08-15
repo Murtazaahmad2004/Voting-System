@@ -271,8 +271,8 @@ def delete_candidate_record(cnic):
     return redirect(url_for('admin_candidate_list_page'))
 
 # ADMIN voter list page
-@app.route('/admin/voter_list_page', methods=['GET'])
-def admin_voter_list_page():
+@app.route('/admin/signup', methods=['GET'])
+def admin_signup():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
@@ -289,7 +289,7 @@ def admin_voter_list_page():
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
-    return render_template('admin/voter_list_page.html', records=records)
+    return render_template('admin/signup.html', records=records)
 
 # ADMIN: delete voter (route name changed to avoid conflict)
 @app.route('/admin/delete_voter/<string:cnic>', methods=['GET'])
@@ -306,7 +306,7 @@ def delete_voter_record(cnic):
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
-    return redirect(url_for('admin_voter_list_page'))
+    return redirect(url_for('admin_signup'))
 
 # ADMIN see results (shared query)
 @app.route('/admin/see_results')
@@ -388,57 +388,6 @@ def toggle_election(election_id):
 
     return redirect(url_for('list_elections'))
 
-# Notifications System
-def add_notification(message, user_role="admin"):
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO notifications (message, user_role, is_read)
-            VALUES (%s, %s, %s)
-        """, (message, user_role, False))
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except Exception as e:
-        print("❌ Notification error:", e)
-
-# List all notifications for admin
-@app.route('/admin/notification_alert')
-def admin_notification_alert():
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("""
-            SELECT * FROM notifications 
-            WHERE user_role = 'admin'
-            ORDER BY created_at DESC
-        """)
-        notifications = cursor.fetchall()
-        cursor.close()
-        conn.close()
-    except Exception as e:
-        notifications = []
-        flash(f"❌ Database error: {e}", "danger")
-
-    return render_template('admin/notification_alert.html', notifications=notifications)
-
-# Mark notification as read
-@app.route('/admin/mark_read/<int:notif_id>')
-def mark_read(notif_id):
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        cursor.execute("UPDATE notifications SET is_read = TRUE WHERE id = %s", (notif_id,))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        flash("✅ Notification marked as read.", "success")
-    except Exception as e:
-        flash(f"❌ Error updating notification: {e}", "danger")
-
-    return redirect(url_for('admin_notification_alert'))
-
 # Candidate routes (voter-facing candidate registration)
 @app.route('/candidate/candidate_page', methods=['GET', 'POST'])
 def candidate_candidate_page():
@@ -519,52 +468,61 @@ def candidate_voter_list_page():
 # candidate see result
 @app.route('/candidate/see_results')
 def candidate_see_result():
+
     conn = None
     cursor = None
+
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
 
-        # Latest active election
-        cursor.execute("SELECT * FROM elections WHERE is_active = TRUE ORDER BY id DESC LIMIT 1")
+        # Latest election get karo
+        cursor.execute("""
+            SELECT *
+            FROM elections
+            ORDER BY id DESC
+            LIMIT 1
+        """)
+
         election = cursor.fetchone()
 
+        # Agar koi election exist nahi karti
         if not election:
             return render_template(
                 'candidate/see_results.html',
-                results=None,
+                results=[],
                 election=None,
+                message="❌ No election found."
             )
 
-        # Current time
-        now = datetime.now()
+        # ==========================================
+        # ELECTION ACTIVE HAI → RESULTS HIDE
+        # ==========================================
+        if election['is_active'] == 1:
 
-        # Check if election not started
-        if now < election['start_date']:
             return render_template(
                 'candidate/see_results.html',
-                results=None,
+                results=[],
                 election=election,
-                message="⏳ Results will be available after voting starts."
+                message="🗳️ Election is currently active. Results will be available after the election ends."
             )
 
-        # Check if election still running
-        if now < election['end_date']:
-            return render_template(
-                'candidate/see_results.html',
-                results=None,
-                election=election,
-                message="🗳️ Results will be available after voting ends."
-            )
+        # ==========================================
+        # ELECTION DEACTIVE HAI → RESULTS SHOW
+        # ==========================================
 
-        # ✅ Election ended → show results
-        query = """
-            SELECT party_name, candidate_name, COUNT(*) as total_votes
+        cursor.execute("""
+            SELECT
+                party_name,
+                candidate_name,
+                COUNT(*) AS total_votes
             FROM votes_full
+            WHERE candidate_name IS NOT NULL
+              AND candidate_name != ''
             GROUP BY party_name, candidate_name
-            ORDER BY total_votes DESC;
-        """
-        cursor.execute(query)
+            ORDER BY total_votes DESC
+        """)
+
         results = cursor.fetchall()
 
         return render_template(
@@ -575,17 +533,21 @@ def candidate_see_result():
         )
 
     except Exception as e:
-        print("Error fetching results:", e)
+
+        print("❌ Candidate result error:", e)
+
         return render_template(
             'candidate/see_results.html',
-            results=None,
+            results=[],
             election=None,
-            message="❌ Error loading results."
+            message=f"❌ Error loading results: {e}"
         )
 
     finally:
+
         if cursor:
             cursor.close()
+
         if conn:
             conn.close()
 

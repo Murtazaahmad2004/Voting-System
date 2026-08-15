@@ -9,7 +9,227 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <title>Voter Registration (Voter)</title>
 </head>
-<body>
+<style>
+  :root{
+    --ink:#122024;
+    --ink-soft:#4b5d61;
+    --paper:#f6f4ef;
+    --card:#ffffff;
+    --line:#e2ddd2;
+    --teal:#1f6f66;
+    --teal-deep:#123c37;
+    --amber:#c98a2c;
+    --sidebar-w:220px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+
+  body.has-sidebar{
+    margin-left:var(--sidebar-w);
+    padding-top:68px;
+    padding-bottom:52px;
+  }
+
+  /* ---- Top navbar ---- */
+  .navbar{
+    position:fixed;
+    top:0;
+    left:var(--sidebar-w);
+    right:0;
+    z-index:50;
+    background:var(--teal-deep);
+    color:#fdfaf3;
+    padding:20px 32px;
+    box-shadow:0 2px 10px rgba(18,32,36,0.15);
+  }
+  .navbar h1{
+    margin:0;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:-0.2px;
+  }
+
+  /* ---- Registration card ---- */
+  .voting-registration-container{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:0 20px 50px -25px rgba(18,32,36,0.25);
+    padding:40px 40px 44px;
+    max-width:480px;
+    margin:36px auto;
+  }
+
+  .voting-registration-container > h1{
+    margin:0 0 24px;
+    font-size:21px;
+    font-weight:700;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .voting-registration-container > h1::before{
+    content:"\f2bb";
+    font-family:"Font Awesome 6 Free";
+    font-weight:900;
+    color:var(--amber);
+    font-size:18px;
+  }
+
+  .text-center{ text-align:center; }
+
+  /* ---- Flash messages ---- */
+  .alert{
+    padding:12px 16px;
+    border-radius:12px;
+    font-size:13.5px;
+    margin:0 0 18px;
+    border:1px solid transparent;
+  }
+  .alert-success{
+    background:#e6f3ee;
+    color:#0f5132;
+    border-color:#bfe3d3;
+  }
+  .alert-danger, .alert-error{
+    background:#fbeaea;
+    color:#7a2020;
+    border-color:#f3caca;
+  }
+  .alert-warning{
+    background:#fbf1de;
+    color:#7a5a12;
+    border-color:#f0dcae;
+  }
+  .alert-info{
+    background:#e8f2ef;
+    color:var(--teal-deep);
+    border-color:#cfe6df;
+  }
+
+  /* ---- Form ---- */
+  .form-group{
+    margin-bottom:16px;
+  }
+  .form-group label{
+    display:block;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+  .form-group .form-control{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+    font-size:14px;
+    font-family:inherit;
+    color:var(--ink);
+    background:#fdfcfa;
+  }
+  .form-group .form-control:focus{
+    outline:2px solid var(--teal);
+    outline-offset:1px;
+  }
+
+  .btn-primary{
+    width:100%;
+    background:var(--teal-deep);
+    color:#fdfaf3;
+    border:none;
+    padding:14px;
+    border-radius:12px;
+    font-size:14.5px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:6px;
+    transition:background .15s ease;
+  }
+  .btn-primary:hover{
+    background:var(--teal);
+  }
+
+  /* ---- Registration closed state ---- */
+  .registration-closed{
+    text-align:center;
+    padding:8px 4px 4px;
+  }
+  .registration-closed-icon{
+    width:56px;
+    height:56px;
+    margin:0 auto 16px;
+    border-radius:50%;
+    background:#fbf1de;
+    color:var(--amber);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+  }
+  .registration-closed h2{
+    margin:0 0 10px;
+    font-size:17px;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .registration-closed p{
+    margin:0;
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--ink-soft);
+  }
+  .registration-closed p b{
+    color:var(--ink);
+  }
+
+  /* ---- Footer ---- */
+  .footer{
+    position:fixed;
+    bottom:0;
+    left:var(--sidebar-w);
+    right:0;
+    z-index:50;
+    padding:14px 24px;
+    border-top:1px solid var(--line);
+    background:var(--card);
+  }
+  .footer p{
+    margin:0;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px){
+    body.has-sidebar{
+      margin-left:0;
+    }
+    .navbar, .footer{
+      left:0;
+    }
+    .navbar h1 {
+        text-align: center;
+    }
+    .voting-registration-container{
+      margin:24px 16px;
+      padding:30px 24px 34px;
+    }
+  }
+</style>
+<body class="has-sidebar">
     {% include '/voter/voter_sidebar.html' %}
 
     <div class="navbar">
@@ -34,12 +254,12 @@
             <!-- Registration Form -->
             <form method="POST" action="/voter/voteing_registration">
                 <div class="form-group">
-                    <label for="idcard">ID Card:</label>
+                    <label for="idcard">ID Card</label>
                     <input type="text" name="idcard" class="form-control" placeholder="Enter ID Card" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email:</label>
+                    <label for="email">Email</label>
                     <input type="email" name="email" class="form-control" placeholder="Enter Email" required>
                 </div>
 
@@ -47,12 +267,15 @@
             </form>
         {% else %}
             <!-- Registration Closed Message -->
-            <div>
-                <h2>❌ Voter Registration is currently closed!</h2>
+            <div class="registration-closed">
+                <div class="registration-closed-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2>Voter registration is currently closed</h2>
                 {% if election_start and election_end %}
-                    <p>Registration is only available between 
-                        <b>{{ election_start.strftime('%Y-%m-%d %H:%M') }}</b> 
-                        and 
+                    <p>Registration is only available between
+                        <b>{{ election_start.strftime('%Y-%m-%d %H:%M') }}</b>
+                        and
                         <b>{{ election_end.strftime('%Y-%m-%d %H:%M') }}</b>.
                     </p>
                 {% endif %}

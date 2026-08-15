@@ -9,20 +9,156 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <title>Candidate Home Page(Candidate)</title>
 </head>
-<body>
+<style>
+  :root{
+    --ink:#122024;
+    --ink-soft:#4b5d61;
+    --paper:#f6f4ef;
+    --card:#ffffff;
+    --line:#e2ddd2;
+    --teal:#1f6f66;
+    --teal-deep:#123c37;
+    --amber:#c98a2c;
+    --sidebar-w:220px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    min-height:100vh;
+  }
+
+  body.has-sidebar{
+    margin-left:var(--sidebar-w);
+    padding-top:68px;
+    padding-bottom:52px;
+  }
+
+  /* ---- Top navbar ---- */
+  .navbar{
+    position:fixed;
+    top:0;
+    left:var(--sidebar-w);
+    right:0;
+    z-index:50;
+    background:var(--teal-deep);
+    color:#fdfaf3;
+    padding:20px 32px;
+    box-shadow:0 2px 10px rgba(18,32,36,0.15);
+  }
+  .navbar h1{
+    margin:0;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:-0.2px;
+  }
+
+  /* ---- Welcome hero ---- */
+  .voter-container{
+    min-height:calc(100vh - 130px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 24px;
+  }
+
+  .welcome-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:0 20px 50px -25px rgba(18,32,36,0.25);
+    padding:48px 44px;
+    max-width:480px;
+    width:100%;
+    text-align:center;
+  }
+
+  .welcome-icon{
+    width:68px;
+    height:68px;
+    margin:0 auto 20px;
+    border-radius:50%;
+    background:#e8f2ef;
+    color:var(--teal-deep);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+  }
+
+  .voter-container marquee,
+  .voter-container h1{
+    margin:0 0 12px;
+    font-size:24px;
+    font-weight:700;
+    letter-spacing:-0.3px;
+    color:var(--ink);
+  }
+
+  .welcome-card p{
+    margin:0;
+    font-size:14px;
+    line-height:1.6;
+    color:var(--ink-soft);
+  }
+
+  /* ---- Footer ---- */
+  .footer{
+    position:fixed;
+    bottom:0;
+    left:var(--sidebar-w);
+    right:0;
+    z-index:50;
+    padding:14px 24px;
+    text-align:center;
+    border-top:1px solid var(--line);
+    background:var(--card);
+  }
+  .footer p{
+    margin:0;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px){
+    body.has-sidebar{
+      margin-left:0;
+    }
+    .navbar, .footer{
+      left:0;
+    }
+    .welcome-card{
+      padding:36px 26px;
+    }
+  }
+</style>
+<body class="has-sidebar">
     {% include '/candidate/candidate_sidebar.html' %}
 
     <div class="navbar">
         <h1>Candidate Home Page</h1>
     </div>
 
-  <div class="voter-container">
-    <marquee>
-      <h1>Welcome To Candidate Page.</h1>
-    </marquee>
-  </div>
-  <div class="footer">
-    <p>&copy; 2026 Voting System. All rights reserved.</p>
-  </div>
+    <div class="voter-container">
+        <div class="welcome-card">
+            <div class="welcome-icon">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <marquee>
+                <h1>Welcome To Candidate Page.</h1>
+            </marquee>
+            <p>Track your candidacy, view election details, and stay updated from one place.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 Voting System. All rights reserved.</p>
+    </div>
 </body>
 </html>
